@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DEFECTS>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>c:\users\82759\documents\github\summer_semester\samples\snake\</FILEPATH>
+      <FILENAME>ui.c</FILENAME>
+      <LINE>53</LINE>
+      <COLUMN>11</COLUMN>
+    </SFA>
+    <DEFECTCODE>28251</DEFECTCODE>
+    <DESCRIPTION>“WinMain”的批注不一致: 此实例包含 无批注。请参见 c:\program files (x86)\windows kits\10\include\10.0.15063.0\um\winbase.h(909)。</DESCRIPTION>
+    <FUNCTION>WinMain</FUNCTION>
+    <DECORATED>WinMain@16</DECORATED>
+    <FUNCLINE>53</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>c:\users\82759\documents\github\summer_semester\samples\snake\</FILEPATH>
+      <FILENAME>ui.c</FILENAME>
+      <LINE>65</LINE>
+      <COLUMN>11</COLUMN>
+    </SFA>
+    <DEFECTCODE>28251</DEFECTCODE>
+    <DESCRIPTION>“WinMain”的批注不一致: 此实例包含 无批注。请参见 c:\program files (x86)\windows kits\10\include\10.0.15063.0\um\winbase.h(909)。注意: 此函数有多个原型。此警告将第一个原型与实例号 3 进行比较。 </DESCRIPTION>
+    <FUNCTION>WinMain</FUNCTION>
+    <DECORATED>WinMain@16</DECORATED>
+    <FUNCLINE>65</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+</DEFECTS>

@@ -3,24 +3,24 @@
 #include "snake.h"
 
 // 画图时使用的表示蛇和食物的圆形的直径像素点个数。
-#define CELL_PIXEL			20
+#define CELL_PIXEL			25
 
 // 用来绘图的颜色
-#define COLOR_SNAKE			RGB(193, 205, 205)
-#define COLOR_FOOD			RGB(153, 255, 51)
+#define COLOR_SNAKE			RGB(228, 190, 220)
+#define COLOR_FOOD			RGB(179, 220, 253)
 #define COLOR_BOUNDARY		RGB(139, 134, 130)
-#define COLOR_TEXT			RGB(173,216,230)
+#define COLOR_TEXT			RGB(68,73,73)
 
 // 游戏的参数的设置 
-#define INIT_TIMER_ELAPSE	300	// 初始的时钟周期，确定游戏初始速度
+#define INIT_TIMER_ELAPSE	80	// 初始的时钟周期，确定游戏初始速度
 #define	ONE_LEVELS_SCORES	5	// 每升级一次需要的计分
 #define INIT_SNAKE_LEN		5	// 蛇的长度
 #define SPEEDUP_RATIO		0.8 // 升级以后时间周期（确定游戏速度）提高的比例。
-#define MAX_X		18	// 游戏界面大小
-#define MAX_Y		20	// 游戏界面大小
-#define INIT_X		3	// 蛇的初始位置
-#define INIT_Y		3	// 蛇的初始位置
-#define INIT_DIR	SNAKE_LEFT	// 蛇的初始方向
+#define MAX_X		25	// 游戏界面大小
+#define MAX_Y		15 // 游戏界面大小
+#define INIT_X		5	// 蛇的初始位置
+#define INIT_Y		5	// 蛇的初始位置
+#define INIT_DIR	SNAKE_RIGHT	// 蛇的初始方向
 
 /********************************************************************************
 * ##########关于Windows数据类型##########

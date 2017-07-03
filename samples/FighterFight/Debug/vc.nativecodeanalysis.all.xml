@@ -1,0 +1,96 @@
+﻿<?xml version="1.0" encoding="utf-8"?><DEFECTS><DEFECT>
+    <SFA>
+      <FILEPATH>c:\users\82759\documents\github\summer_semester\samples\fighterfight\</FILEPATH>
+      <FILENAME>linklist.c</FILENAME>
+      <LINE>88</LINE>
+      <COLUMN>13</COLUMN>
+    </SFA>
+    <DEFECTCODE>6011</DEFECTCODE>
+    <DESCRIPTION>取消对 NULL 指针“pnode”的引用。</DESCRIPTION>
+    <FUNCTION>NodeCreate</FUNCTION>
+    <DECORATED>NodeCreate</DECORATED>
+    <FUNCLINE>85</FUNCLINE>
+    <PROBABILITY>1</PROBABILITY>
+    <RANK>4</RANK>
+    <CATEGORY>
+      <RULECATEGORY>mspft</RULECATEGORY>
+    </CATEGORY>
+    <PATH>
+      <SFA>
+        <FILEPATH>c:\users\82759\documents\github\summer_semester\samples\fighterfight\</FILEPATH>
+        <FILENAME>linklist.c</FILENAME>
+        <LINE>87</LINE>
+        <COLUMN>7</COLUMN>
+        <KEYEVENT>
+          <ID>1</ID>
+          <KIND>声明</KIND>
+          <IMPORTANCE>Essential</IMPORTANCE>
+          <MESSAGE>“pnode”可能为 NULL</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>c:\users\82759\documents\github\summer_semester\samples\fighterfight\</FILEPATH>
+        <FILENAME>linklist.c</FILENAME>
+        <LINE>88</LINE>
+        <COLUMN>13</COLUMN>
+        <KEYEVENT>
+          <ID>2</ID>
+          <KIND>使用情况</KIND>
+          <IMPORTANCE>Essential</IMPORTANCE>
+          <MESSAGE>已取消对“pnode”的引用，但可能仍为 NULL</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+    </PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>c:\users\82759\documents\github\summer_semester\samples\fighterfight\</FILEPATH>
+      <FILENAME>ui.c</FILENAME>
+      <LINE>278</LINE>
+      <COLUMN>9</COLUMN>
+    </SFA>
+    <DEFECTCODE>6066</DEFECTCODE>
+    <DESCRIPTION>传递了非指针作为 _Param_(4)，而对“wsprintfA”的调用需要指针参数，实际类型: “unsigned long”。</DESCRIPTION>
+    <FUNCTION>FightWindowPaint</FUNCTION>
+    <DECORATED>FightWindowPaint</DECORATED>
+    <FUNCLINE>208</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>c:\users\82759\documents\github\summer_semester\samples\fighterfight\</FILEPATH>
+      <FILENAME>ui.c</FILENAME>
+      <LINE>408</LINE>
+      <COLUMN>14</COLUMN>
+    </SFA>
+    <DEFECTCODE>6031</DEFECTCODE>
+    <DESCRIPTION>返回值被忽略: “GetLastError”。</DESCRIPTION>
+    <FUNCTION>FightWindowCreate</FUNCTION>
+    <DECORATED>FightWindowCreate</DECORATED>
+    <FUNCLINE>390</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>c:\users\82759\documents\github\summer_semester\samples\fighterfight\</FILEPATH>
+      <FILENAME>ui.c</FILENAME>
+      <LINE>613</LINE>
+      <COLUMN>14</COLUMN>
+    </SFA>
+    <DEFECTCODE>6031</DEFECTCODE>
+    <DESCRIPTION>返回值被忽略: “GetLastError”。</DESCRIPTION>
+    <FUNCTION>AutoflyWindowCreate</FUNCTION>
+    <DECORATED>AutoflyWindowCreate</DECORATED>
+    <FUNCLINE>595</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>c:\users\82759\documents\github\summer_semester\samples\fighterfight\</FILEPATH>
+      <FILENAME>ui.c</FILENAME>
+      <LINE>686</LINE>
+      <COLUMN>11</COLUMN>
+    </SFA>
+    <DEFECTCODE>28251</DEFECTCODE>
+    <DESCRIPTION>“WinMain”的批注不一致: 此实例包含 无批注。请参见 c:\program files (x86)\windows kits\10\include\10.0.15063.0\um\winbase.h(909)。</DESCRIPTION>
+    <FUNCTION>WinMain</FUNCTION>
+    <DECORATED>WinMain@16</DECORATED>
+    <FUNCLINE>686</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT></DEFECTS>
