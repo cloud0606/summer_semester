@@ -12,7 +12,7 @@
 #define COLOR_TEXT			RGB(68,73,73)
 
 // 游戏的参数的设置 
-#define INIT_TIMER_ELAPSE	80	// 初始的时钟周期，确定游戏初始速度
+#define INIT_TIMER_ELAPSE	70	// 初始的时钟周期，确定游戏初始速度
 #define	ONE_LEVELS_SCORES	5	// 每升级一次需要的计分
 #define INIT_SNAKE_LEN		5	// 蛇的长度
 #define SPEEDUP_RATIO		0.8 // 升级以后时间周期（确定游戏速度）提高的比例。
