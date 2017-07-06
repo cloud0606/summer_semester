@@ -12,7 +12,7 @@
 #define COLOR_TEXT			RGB(68,73,73)
 
 // 游戏的参数的设置 
-#define INIT_TIMER_ELAPSE	70	// 初始的时钟周期，确定游戏初始速度
+#define INIT_TIMER_ELAPSE	150	// 初始的时钟周期，确定游戏初始速度
 #define	ONE_LEVELS_SCORES	5	// 每升级一次需要的计分
 #define INIT_SNAKE_LEN		5	// 蛇的长度
 #define SPEEDUP_RATIO		0.8 // 升级以后时间周期（确定游戏速度）提高的比例。
@@ -151,12 +151,12 @@ int WINAPI WinMain(
 
 	hwnd = CreateWindow(
 		"MainWClass",			// 窗口类名，必须是已经注册了的窗口类
-		"Snake Game!!",		// title-bar string 
+		"Snake Game ^=^ ",		// title-bar string 
 		WS_OVERLAPPEDWINDOW,	// 窗口的style，这个表示为top-level window 
 		CW_USEDEFAULT,			// 窗口水平位置default horizontal POINT 
 		CW_USEDEFAULT,			// 窗口垂直位置default vertical POINT 
 		CW_USEDEFAULT,			// 窗口宽度 default width 
-		CW_USEDEFAULT,			// 窗口高度 default height 
+		CW_USEDEFAULT,			// 窗口高度 default height 默认值
 		(HWND)NULL,				// 父窗口句柄 no owner window 
 		(HMENU)NULL,			// 窗口菜单的句柄 use class menu 
 		hinstance,				// 应用程序实例句柄 handle to application instance 
@@ -254,7 +254,7 @@ void GamePaint(HWND hwnd)
 	// To select a bitmap into a DC, use the CreateCompatibleBitmap function
 	// 注意：
 	// http://msdn.microsoft.com/en-us/library/windows/desktop/dd183488(v=vs.85).aspx
-	hdcmem = CreateCompatibleDC(hdc);
+	hdcmem = CreateCompatibleDC(hdc);//内存中的缓冲
 	hbmMem = CreateCompatibleBitmap(hdc,
 		rect.right - rect.left, rect.bottom - rect.top);
 
@@ -262,16 +262,16 @@ void GamePaint(HWND hwnd)
 
 	// 创建需要用到的PEN和BRUSH
 	hbrushFood = CreateSolidBrush(COLOR_FOOD); // RGB颜色，实心BRUSH
-	hpen = CreatePen(PS_NULL, 0, RGB(0, 0, 0));  // PEN， PS_NULL表示不可见
+	hpen = CreatePen(PS_DOT, 0, RGB(1, 0, 0));  // PEN， PS_NULL表示不可见
 	hBrushSnake = CreateSolidBrush(COLOR_SNAKE);
-	hPenBoundary = CreatePen(0, 3, COLOR_BOUNDARY);
+	hPenBoundary = CreatePen(0, 1, COLOR_BOUNDARY);//0代表实心的笔
 
 
 	/*******************************************************************************
 	* #############  画背景  ################
 	*
 	*******************************************************************************/
-	FillRect(hdcmem, &rect, (HBRUSH)GetStockObject(WHITE_BRUSH));
+	FillRect(hdcmem, &rect, (HBRUSH)GetStockObject(WHITE_BRUSH));//填充颜色
 
 	/*******************************************************************************
 	* #############  画食物  ################
@@ -280,12 +280,13 @@ void GamePaint(HWND hwnd)
 
 	// 将画图需要用的PEN和BRUSH选择到DC中
 	hOldBrush = (HBRUSH)SelectObject(hdcmem, hbrushFood);
-	hOldPen = (HPEN)SelectObject(hdcmem, hpen);
+	hOldPen = (HPEN)SelectObject(hdcmem, hpen);//添加笔和画刷
 
-	lpFood = GetFood();
+	lpFood = GetFood();//返回食物坐标
 
 	// （椭）圆形，使用上面选择的PEN勾勒边框，BRUSH填充
-	Rectangle(hdcmem,
+	//Rectangle
+	Ellipse(hdcmem,
 		lpFood->x * CELL_PIXEL + rectBoundary.left,
 		lpFood->y * CELL_PIXEL + rectBoundary.top,
 		(lpFood->x + 1)*CELL_PIXEL + rectBoundary.left,
@@ -303,7 +304,7 @@ void GamePaint(HWND hwnd)
 	for (i = 0; i < snake_size; i++)
 	{
 		pSnakeBody = (PGAME_COORD)GetSnakeAt(i);
-		Rectangle(hdcmem,
+		Ellipse(hdcmem,
 			pSnakeBody->x * CELL_PIXEL + rectBoundary.left,
 			pSnakeBody->y * CELL_PIXEL + rectBoundary.top,
 			(pSnakeBody->x + 1)*CELL_PIXEL + rectBoundary.left,
@@ -503,7 +504,7 @@ LONG CALLBACK MainWndProc(
 		GamePaint(hwnd);
 		break;
 
-	case WM_TIMER:
+	case WM_TIMER:	
 
 		OnTimer(hwnd);
 		GamePaint(hwnd);

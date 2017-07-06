@@ -9,7 +9,7 @@ DWORD dwSorce = 0;
 int flys_init()
 {
 	time_t t;
-	list_flys = ListCreate(0);
+	list_flys = ListCremate(0);
 	srand((unsigned int)(time(&t)*time(&t)));
 	return 0;
 }
@@ -50,8 +50,6 @@ void flys_destory()
 	list_flys = 0;
 }
 
-
-
 void destory_fly_at(unsigned int i)
 {
 	LPAUTO_FLY fly = ListDeleteAt(list_flys, i);
@@ -67,7 +65,6 @@ LPAUTO_FLY get_fly_at(unsigned int i)
 {
 	return (LPAUTO_FLY)ListGetAt(list_flys, i);
 }
-
 
 void fly_move(LPAUTO_FLY auto_fly)
 {
@@ -103,7 +100,6 @@ void fly_out(LPAUTO_FLY auto_fly)
 // 如果击中返回子弹的指针，否则返回空指针。
 int be_hit(LPAUTO_FLY enemy, LPAUTO_FLY bullet)
 {
-
 	if (enemy->x + enemy->ratio_x > bullet->x &&
 		enemy->x - enemy->ratio_x < bullet->x &&
 		enemy->y + enemy->ratio_y > bullet->y &&

@@ -82,7 +82,7 @@ int CreateFood()
 	int i;
 	int size = ListSize(snake_list);
 
-new_food:
+new_food://??
 
 	// 随机生成食物的坐标。
 	food.x = rand() % boundary.x;

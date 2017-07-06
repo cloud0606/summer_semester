@@ -12,14 +12,14 @@
 #define BITMAP_FILE_BK		"cloud.bmp"
 
 #define TIMER_ID			12340                                                           
-#define TRANS_BK_COLOR		RGB(255,255,255)
+#define TRANS_BK_COLOR		RGB(1,1,1)
 #define FIGHTER_HEIGHT		50
 #define FIGHTER_WIDTH		50
 
 
-#define FIGHTER_MOVE_STEP	5		// 飞机在方向键的作用下，每次移动的像素；
+#define FIGHTER_MOVE_STEP	30		// 飞机在方向键的作用下，每次移动的像素；
 
-#define GAME_HEIGHT 1000
+#define GAME_HEIGHT 500
 #define GAME_WIDTH	500
 
 
