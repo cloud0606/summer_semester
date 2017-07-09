@@ -1,3 +1,2 @@
-﻿  ui.c
-  FighterFight.vcxproj -> C:\Users\82759\Documents\GitHub\summer_semester\samples\Debug\FighterFight.exe
-  FighterFight.vcxproj -> C:\Users\82759\Documents\GitHub\summer_semester\samples\Debug\FighterFight.pdb (Partial PDB)
+﻿auto_fly.obj : error LNK2019: 无法解析的外部符号 _ListCremate，该符号在函数 _flys_init 中被引用
+C:\Users\82759\Documents\GitHub\summer_semester\samples\Debug\FighterFight.exe : fatal error LNK1120: 1 个无法解析的外部命令

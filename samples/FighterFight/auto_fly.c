@@ -9,7 +9,7 @@ DWORD dwSorce = 0;
 int flys_init()
 {
 	time_t t;
-	list_flys = ListCremate(0);
+	list_flys = ListCreate(0);
 	srand((unsigned int)(time(&t)*time(&t)));
 	return 0;
 }

@@ -16,7 +16,6 @@
 #define FIGHTER_HEIGHT		50
 #define FIGHTER_WIDTH		50
 
-
 #define FIGHTER_MOVE_STEP	30		// 飞机在方向键的作用下，每次移动的像素；
 
 #define GAME_HEIGHT 500
@@ -185,6 +184,13 @@ HWND BackgroundWindowCreate(HINSTANCE hinstance)
 		// 窗口创建失败，消息框提示，并退出。
 		MessageBox(NULL, "创建窗口失败", "错误！", MB_ICONERROR | MB_OK);
 		return NULL;
+	}
+
+	if (!SetLayeredWindowAttributes(
+		hwnd, TRANS_BK_COLOR,
+		255, LWA_ALPHA))
+	{
+		DWORD dwError = GetLastError();
 	}
 
 	if (!SetLayeredWindowAttributes(
@@ -618,7 +624,7 @@ HWND AutoflyWindowCreate(HINSTANCE hinstance)
 
 	if (!SetLayeredWindowAttributes(
 		hwnd, TRANS_BK_COLOR,
-		255, LWA_COLORKEY | LWA_ALPHA))
+		115, LWA_COLORKEY | LWA_ALPHA))
 	{
 		DWORD dwError = GetLastError();
 	}
@@ -673,8 +679,6 @@ HWND AutoflyWindowCreate(HINSTANCE hinstance)
 //	}
 //	return TRUE;
 //}
-
-
 
 /*******************************************************************************
 * ##########   入口函数WinMain    ##########
@@ -755,9 +759,6 @@ int WINAPI WinMain(
 	}
 	return msg.wParam;
 }
-
-
-
 
 LONG BackgroundCreate(HWND hwnd)
 {
@@ -845,7 +846,7 @@ LONG BackgroundPaint(HWND hwnd)
 	ReleaseDC(hwnd, hdc);
 	DeleteDC(hdc);
 	return 0;
-}
+} 
 
 LONG FighterCreate(HWND hwnd)
 {
