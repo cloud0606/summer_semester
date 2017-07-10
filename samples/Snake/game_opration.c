@@ -134,6 +134,7 @@ void CreateGame(HWND hwnd, // 主窗口句柄
 {
 	// 设置随机数种子
 	// 需要使用随机数生成食物的位置等。
+	//利用系统时间设置随机数
 	FILETIME ft;
 	GetSystemTimeAsFileTime(&ft);
 	srand(ft.dwLowDateTime);
