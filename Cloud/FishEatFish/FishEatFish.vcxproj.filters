@@ -21,7 +21,7 @@
     <ClInclude Include="LinkLIst.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Game.h">
+    <ClInclude Include="ui.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

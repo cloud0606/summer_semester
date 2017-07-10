@@ -1,37 +1,30 @@
 #include <windows.h>
 #include "Fish.h"
-#include "Game.h"
+#include "ui.h"
 #include "LinkLIst.h"
 
 #pragma comment (lib, "Winmm.lib")
 
+/****************** 宏定义 *******************/
+
+#define TRANS_BK_COLOR   RGB(135,206,250)
+#define BITMAP_FILE_BK   "BK.bmp" //背景图
+#define BITMAP_FILE_PLAYER  "PLAYER.bmp" //玩家小鱼图文件名
+#define BITMAP_FILE_FISH_1  "FISH_1.bmp" //等级1小鱼文件名
+#define BITMAP_FILE_FISH_2  "FISH_2.bmp" //等级2小鱼文件名
+#define BITMAP_FILE_FISH_3  "FISH_3.bmp" //等级3小鱼文件名
+#define BITMAP_FILE_FISH_4  "FISH_4.bmp" //等级4小鱼文件名
+#define TIMER_ID	12340
+
 #define CLASS_NAME_BK  "bk_class"
 #define CLASS_NAME_PLAYER  "player_class"
 
-#define TRANS_BK_COLOR   RGB(135,206,250)
-#define BITMAP_FILE_BK   "BK.bmp"
-#define BITMAP_FILE_PLAYER  "PLAYER.bmp"
-#define BITMAP_FILE_FISH_1  "FISH_1.bmp"
-#define BITMAP_FILE_FISH_2  "FISH_2.bmp"
-#define BITMAP_FILE_FISH_3  "FISH_3.bmp"
-#define BITMAP_FILE_FISH_4  "FISH_4.bmp"
 
-#define TIMER_ID	12340 
-
-#define COLOR_FISH  RGB(135,206,250)
-#define COLOR_FISH_DEAD  RGB(255,48,48)
-
-
-
-//全局变量
-
-DWORD dwTimerElapse = 40;
-
+/****************** 全局变量 *******************/
+DWORD dwTimerElapse = 40;//时间间隔
 HWND hwndBackground;
 HWND hwndPlayer;
 HINSTANCE hinst;
-
-
 HBITMAP hbmpPlayer;
 HBITMAP hbmpBackground;
 HBITMAP hbmpFish_1;
@@ -42,53 +35,30 @@ HBITMAP hbmpFish_4;
 BOOL BackGroundWindwowRegister(HINSTANCE hinstance)
 {
 	WNDCLASS wc;
-	// 窗口句柄，hwnd变量是主窗口的句柄，这个程序中只用到了一个窗口。
-
-	// Fill in the window class structure with parameters 
-	// that describe the main window. 
-
-	// 窗口类的样式，这里设置的样式表示窗口在大小变化是需要重绘
 	wc.style = CS_HREDRAW | CS_VREDRAW;
-	// 一个函数指针，这个函数用来处理窗口消息。 详见 MainWndProc函数的注释。
 	wc.lpfnWndProc = BackGroundWindowProc;
-	// no extra class memory 
 	wc.cbClsExtra = 0;
-	// no extra window memory
 	wc.cbWndExtra = 0;
-	// handle to instance 
 	wc.hInstance = hinstance;
-	// hIcon成员用来指定窗口的图标
-	// 这里直接使用LoadIcon函数加载了一个系统预定义的图标，开发人员可也可以自己创建图标。
 	wc.hIcon = NULL;
-	// Cursor是鼠标光标，这里是设定了鼠标光标的样式。
-	// 直接使用LoadCursor API函数载入了一个系统预定义的光标样式，还有IDC_CROSS,IDC_HAND等样式 
 	wc.hCursor = LoadCursor(NULL,
 		IDC_CROSS);
-	// GetStockObject的功能是加载一个系统预定义（在栈中）的GDI对象，
-	// 这里加载的是一个白色的画刷，有关画刷和GDI对象，详见GDI说明。
 	wc.hbrBackground = (HBRUSH)GetStockObject(
 		WHITE_BRUSH);
-	// 窗口的菜单的资源名。
 	wc.lpszMenuName = NULL;
-	// 给窗口类起一个名字，在创建窗口时需要这个名字。
 	wc.lpszClassName = CLASS_NAME_BK;
-
-	// Register the window class. 
 
 	if (!RegisterClass(&wc))
 	{
-		// 窗口注册失败，消息框提示，并退出。
 		MessageBox(NULL, "创建窗口class失败", "错误！", MB_ICONERROR | MB_OK);
 		return FALSE;
 	}
-	// 窗口注册成功，继续运行。
 	return TRUE;
 }
 
 HWND BackgroundWindowCreate(HINSTANCE hinstance)
 {
 
-	// Create the main window. 
 	HWND hwnd;
 	hwnd = CreateWindowEx(
 		WS_EX_APPWINDOW | WS_EX_LAYERED | WS_EX_TOPMOST,
@@ -104,26 +74,18 @@ HWND BackgroundWindowCreate(HINSTANCE hinstance)
 		hinstance,				// 应用程序实例句柄 handle to application instance 
 		(LPVOID)NULL);			// 指向附加数据的指针 no window-creation data 
 
-	if (!hwnd)
-	{
-		// 窗口创建失败，消息框提示，并退出。
+	if (!hwnd) {
 		MessageBox(NULL, "创建窗口失败", "错误！", MB_ICONERROR | MB_OK);
 		return NULL;
 	}
 
 	if (!SetLayeredWindowAttributes(
 		hwnd, TRANS_BK_COLOR,
-		150, LWA_ALPHA))//设置背景透明度
-	{
+		100,//设置背景透明度
+		LWA_ALPHA)) {
 		DWORD dwError = GetLastError();
 	}
-
-	// 窗口创建成功，继续运行。
-
-	// 显示窗口，WinMain函数的nCmdShow参数在这里发挥作用，一般都设置为SW_SHOW
 	ShowWindow(hwnd, SW_SHOW);
-
-	// 刷新窗口，向窗口发送一个WM_PAINT消息，使得窗口进行重绘。
 	UpdateWindow(hwnd);
 	return hwnd;
 
@@ -135,15 +97,10 @@ LONG BackgroundCreate(HWND hwnd)
 	if (PlayerWindowRegister(hinst))
 		hwndPlayer = PlayerWindowCreate(hinst);
 
-	//if (AutoflysWindowRegister(hinst))
-	//	hwndAutoflys = AutoflyWindowCreate(hinst);
-
-	//BITMAP bmp;背景图
 	hbmpBackground = LoadImage(NULL, BITMAP_FILE_BK,
 		IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
 
-	if (hbmpBackground == NULL)
-	{
+	if (hbmpBackground == NULL) {
 		MessageBox(hwnd, "bmp file not find", "ERROR!",
 			MB_OK | MB_ICONERROR);
 		ExitProcess(0);
@@ -162,18 +119,15 @@ LONG BackgroundCreate(HWND hwnd)
 LONG BackgroundPaint(HWND hwnd)
 {
 	HDC hdc, hdcMem;
-	//PAINTSTRUCT ps;
 	RECT rect;
 
 	BITMAP bmp;
+	//或者窗口的位置，用于画背景图
+	GetClientRect(hwnd, &rect);
 
 	hdc = GetDC(hwnd);
-	GetClientRect(hwnd, &rect);
-	// Create a memory device compatible with the above DC variable
 	hdcMem = CreateCompatibleDC(hdc);
-
 	SelectObject(hdcMem, hbmpBackground);
-
 	GetObject(hbmpBackground, sizeof(BITMAP), &bmp);
 
 	StretchBlt(hdc,
@@ -194,15 +148,11 @@ LONG BackgroundPaint(HWND hwnd)
 LONG BackgroundResizeAndMove(HWND hwnd, LPRECT lpRect)
 {
 
-	SetWindowPos(hwndPlayer, HWND_TOPMOST, lpRect->left, lpRect->top,
-		lpRect->right - lpRect->left, lpRect->bottom - lpRect->top, SWP_SHOWWINDOW);
-
-	//SetWindowPos(hwndFighter, HWND_TOPMOST,
-	//	(lpRect->left + lpRect->right - FIGHTER_WIDTH) / 2,
-	//	lpRect->bottom - FIGHTER_HEIGHT,
-	//	FIGHTER_WIDTH,
-	//	FIGHTER_HEIGHT,
-	//	SWP_SHOWWINDOW);
+	SetWindowPos(hwndPlayer,
+		HWND_TOPMOST,/*该窗口位于其他所有窗口的顶部 ，HWND_BOTTOM(底部)*/
+		lpRect->left + 100, lpRect->top + 100,//设置窗口的horizontal,vertical位置
+		lpRect->right - lpRect->left, lpRect->bottom - lpRect->top, //设置窗口width和height
+		SWP_SHOWWINDOW);//显示窗口
 
 	//SetFocus(hwndBackground);
 
@@ -239,7 +189,6 @@ LONG OnKeydown(HWND hwnd, UINT vk)
 		PlayerWindowPaint(hwndPlayer);
 		break;
 	default:
-		// 其他键不响应
 		break;
 	}
 	return 0;
@@ -247,29 +196,20 @@ LONG OnKeydown(HWND hwnd, UINT vk)
 
 
 LONG CALLBACK BackGroundWindowProc(
-	HWND hwnd, //
-	UINT msg, // 消息
-	WPARAM wParam, // 消息参数，不同的消息有不同的意义，详见MSDN中每个消息的文档
-	LPARAM lParam) // 消息参数，不同的消息有不同的意义，详见MSDN中每个消息的文档
+	HWND hwnd,
+	UINT msg,
+	WPARAM wParam,
+	LPARAM lParam)
 {
 	RECT rectNew;
-	// 注意，是switch-case, 每次这个函数被调用，只会落入到一个case中。
 	switch (msg)
 	{
-		// 当窗口被创建时，收到的第一个消息就是WM_CREATE，
-		// 一般收到这个消息处理过程中，可以用来进行一些初始化的工作
 	case WM_CREATE:
 		BackgroundCreate(hwnd);
 		SetFocus(hwnd);
-		PostMessage(hwnd, WM_LBUTTONDOWN, 0, (DWORD)0x0050050);
-		PostMessage(hwnd, WM_LBUTTONUP, 0, (DWORD)0x0050050);
-
+		/*PostMessage(hwnd, WM_LBUTTONDOWN, 0, (DWORD)0x0050050);
+		PostMessage(hwnd, WM_LBUTTONUP, 0, (DWORD)0x0050050);*/
 		break;
-
-		// 当系统认为窗口上的GDI对象应该被重绘时，会向窗口发送一个WM_PAINT消息。
-		// 当然应用程序也可以通过调用 UpateWindow来主动向窗口发送一个WM_PAINT消息。
-		// 所有使用GDI在窗口上绘制图形的程序都 “必须” 写在这里。
-		// 如果不是在WM_PAINT消息的处理过程中绘制GDI图形，那么在窗口刷新时就会被新被抹除和覆盖
 	case WM_PAINT:
 		BackgroundPaint(hwnd);
 		break;
@@ -314,43 +254,21 @@ LONG CALLBACK BackGroundWindowProc(
 		lParam);
 }
 
-
-
 BOOL PlayerWindowRegister(HINSTANCE hinstance)
 {
 	WNDCLASS wc;
-	// 窗口句柄，hwnd变量是主窗口的句柄，这个程序中只用到了一个窗口。
-
-	// Fill in the window class structure with parameters 
-	// that describe the main window. 
-	// 窗口类的样式，这里设置的样式表示窗口在大小变化是需要重绘
 	wc.style = CS_HREDRAW | CS_VREDRAW;
-	// 一个函数指针，这个函数用来处理窗口消息。 详见 MainWndProc函数的注释。
 	wc.lpfnWndProc = PlayerWindowProc;
-	// no extra class memory 
 	wc.cbClsExtra = 0;
-	// no extra window memory
 	wc.cbWndExtra = 0;
-	// handle to instance 
 	wc.hInstance = hinstance;
-	// hIcon成员用来指定窗口的图标
-	// 这里直接使用LoadIcon函数加载了一个系统预定义的图标，开发人员可也可以自己创建图标。
 	wc.hIcon = NULL;
-	// Cursor是鼠标光标，这里是设定了鼠标光标的样式。
-	// 直接使用LoadCursor API函数载入了一个系统预定义的光标样式，还有IDC_CROSS,IDC_HAND等样式 
 	wc.hCursor = LoadCursor(NULL, IDC_CROSS);
-	// GetStockObject的功能是加载一个系统预定义（在栈中）的GDI对象，
-	// 这里加载的是一个白色的画刷，有关画刷和GDI对象，详见GDI说明。
 	wc.hbrBackground = (HBRUSH)CreateSolidBrush(TRANS_BK_COLOR);
-	// 窗口的菜单的资源名。
 	wc.lpszMenuName = NULL;
-	// 给窗口类起一个名字，在创建窗口时需要这个名字。
 	wc.lpszClassName = CLASS_NAME_PLAYER;
-	// Register the window class. 
-
 	if (!RegisterClass(&wc))
 	{
-		// 窗口注册失败，消息框提示，并退出。
 		MessageBox(NULL, "创建窗口class失败", "错误！", MB_ICONERROR | MB_OK);
 		return FALSE;
 	}
@@ -373,14 +291,11 @@ HWND PlayerWindowCreate(HINSTANCE hinstance)
 		(HMENU)NULL,			// 窗口菜单的句柄 use class menu 
 		hinstance,				// 应用程序实例句柄 handle to application instance 
 		(LPVOID)NULL);			// 指向附加数据的指针 no window-creation data 
-	if (!hwnd)
-	{
+	if (!hwnd) {
 		GetLastError();
-		// 窗口创建失败，消息框提示，并退出。
 		MessageBox(NULL, "创建窗口失败", "错误！", MB_ICONERROR | MB_OK);
 		return NULL;
 	}
-
 
 	if (!SetLayeredWindowAttributes(
 		hwnd, TRANS_BK_COLOR,
@@ -388,11 +303,7 @@ HWND PlayerWindowCreate(HINSTANCE hinstance)
 	{
 		DWORD dwError = GetLastError();
 	}
-
-	// 窗口创建成功，继续运行。
-	// 显示窗口，WinMain函数的nCmdShow参数在这里发挥作用，一般都设置为SW_SHOW
 	ShowWindow(hwnd, SW_SHOW);
-	// 刷新窗口，向窗口发送一个WM_PAINT消息，使得窗口进行重绘。
 	UpdateWindow(hwnd);
 	return hwnd;
 }
@@ -402,18 +313,17 @@ LONG PlayerWindowPaint(HWND hwnd)
 	int num, i;
 
 	//鱼（玩家）
-	HDC hdc, hdcMem, hdcBitmapSrc;
+	HDC hdc;
+	HDC hdcMem;
+	HDC hdcBitmapSrc;
 	HBITMAP hBitmap;
 	BITMAP bmp;
 	//鱼（其他）
 	PFISH fish;
-
 	//背景
 	RECT rect;
 	//字体
 	HFONT hFont;
-
-
 	CHAR debug_info[100];
 
 	GetClientRect(hwnd, &rect);
@@ -425,13 +335,12 @@ LONG PlayerWindowPaint(HWND hwnd)
 	SelectObject(hdcMem, hBitmap);
 	hdcBitmapSrc = CreateCompatibleDC(hdc);
 
-	/*******************************************************************************
-	* #############  画背景  ################
-	*
-	*******************************************************************************/
+
+	/****************  画背景  ********************/
+
 	FillRect(hdcMem, &rect, (HBRUSH)GetStockObject(WHITE_BRUSH));
 
-	// 鱼（玩家）
+	/****************   画鱼   ********************/
 
 	SelectObject(hdcBitmapSrc, hbmpPlayer);
 
@@ -589,12 +498,8 @@ LONG PlayerCreate(HWND hwnd)
 
 	SetTimer(hwnd, TIMER_ID, dwTimerElapse, NULL);
 
-
 	return 0;
 
-	//SetFocus(hwndBackground);
-
-	//MoveWindow(hwnd, 100, 100, MAX_X, MAX_Y, TRUE);
 }
 
 LONG PlayerTimer(HWND hwnd)
@@ -612,25 +517,18 @@ LONG PlayerTimer(HWND hwnd)
 	}
 
 	DestroyFishByState();
-
-	if (rand() % 1000 < 150) // 2%的概率，随机产生敌机。
-	{
+	// 1.5%的概率，随机产生鱼
+	if (rand() % 1000 < 150) {
 		CreateFish();
 	}
-
 	return 0;
 }
-
 
 LONG CALLBACK PlayerWindowProc(HWND hwnd, UINT msg,
 	WPARAM wParam, LPARAM lParam)
 {
-
-	// 注意，是switch-case, 每次这个函数被调用，只会落入到一个case中。
 	switch (msg)
 	{
-		// 当窗口被创建时，收到的第一个消息就是WM_CREATE，
-		// 一般收到这个消息处理过程中，可以用来进行一些初始化的工作
 	case WM_CREATE:
 		PlayerCreate(hwnd);
 
@@ -679,8 +577,7 @@ int WINAPI WinMain(
 		return 0;
 
 	while ((fGotMessage = GetMessage(&msg, (HWND)NULL, 0, 0)) != 0
-		&& fGotMessage != -1)
-	{
+		&& fGotMessage != -1) {
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
 	}

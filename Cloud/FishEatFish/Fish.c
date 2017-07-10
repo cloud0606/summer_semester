@@ -1,14 +1,14 @@
 #include <windows.h>
 #include "Fish.h"
 #include "LinkList.h"
-#include "Game.h"
+#include "ui.h"
 
-/********** 全局变量 **********/
-DWORD score = 0;
-DWORD level = 3;
-PLIST fishes;
+/****************** 全局变量 *******************/
+DWORD score = 0;//玩家小鱼的分数
+DWORD level = 3;//玩家小鱼的等级
+PLIST fishes; //存储鱼群（不包括玩家小鱼）的链表
 
-/*********** 函数定义 **************/
+/****************** 函数定义 *******************/
 
 /* 初始化鱼群 */
 int FishInit()
@@ -17,21 +17,6 @@ int FishInit()
 	fishes = ListCreate(0);
 	srand((unsigned int)(time(&t)*time(&t)));
 	return 0;
-}
-
-/* 创建鱼群 */
-PLIST CreateFishSchool() {
-	int i;
-	int y;
-	PLIST plist;
-	int fishlevel;
-	int sum = malloc(sizeof(int));//存储鱼群的总数
-	sum = FISH_SUM;
-	plist = ListCreate(&sum);
-	for (i = 0; i < FISH_SUM; i++) {
-		CreateFish();
-	}
-	return plist;
 }
 
 /* 创建一条鱼 */
@@ -84,7 +69,7 @@ void IsFishOut() {
 	PFISH pos;
 	for (i = 0; i < ListSize(fishes); i++) {
 		pos = (PFISH)ListGetAt(fishes, i);
-	
+
 		if (pos->_coord.x > FISH_BOUNDARY_X ||
 			pos->_coord.x < 0 ||
 			pos->_coord.y > FISH_BOUNDARY_Y ||
@@ -99,15 +84,15 @@ void IsFishOut() {
 BOOL IsFishDead() {
 	//判断玩家是否吃掉其他鱼 吃掉则加分
 	//或玩家是否被其他鱼吃掉 
-	int i,n;
+	int i, n;
 	PFISH pos;
 	n = ListSize(fishes);
-	for (i = 0; i < n ; i++) {
+	for (i = 0; i < n; i++) {
 		pos = (PFISH)getFishAt(i);
 		if (pos->_coord.x < ptPlayer.x  &&
 			pos->_coord.x + pos->_rang._x > ptPlayer.x  &&
-			pos->_coord.y  < ptPlayer.y &&
-			pos->_coord.y + pos->_rang._y  > ptPlayer.y ) {
+			pos->_coord.y  < ptPlayer.y + PLAYER_HEIGHT / 2 &&
+			pos->_coord.y + pos->_rang._y  > ptPlayer.y + PLAYER_HEIGHT / 2) {
 			if (pos->_fishlevel < getLevel())
 			{//玩家得分
 				score += FISH_SCORE_ADD * pos->_fishlevel;
@@ -115,7 +100,7 @@ BOOL IsFishDead() {
 			}
 			else if (pos->_fishlevel > getLevel()) {
 				//玩家小鱼死亡
-				setLevel(FISH_LEV_0);	
+				setLevel(FISH_LEV_0);
 				return 1;
 			}
 		}
@@ -178,30 +163,27 @@ PFISH getFishAt(int i) {
 	return ListGetAt(fishes, i);
 }
 
-
-DWORD getScore() {
-	return score;
-}
-
-void setScore(DWORD s) {
-	score = s;
-}
-
+/* 返回玩家小鱼的等级 */
 DWORD getLevel() {
 	return level;
 }
+
+/* 设置玩家小鱼的等级 */
 void setLevel(FISH_LEVEL i) {
 	level = i;
 }
 
-//int getFishX(PFISH f) {
-//	return f->_coord.x;
-//}
-//
-//int getFishY(PFISH f) {
-//	return f->_coord.y;
-//}
+/* 返回玩家小鱼的分数 */
+DWORD getScore() {
+	return score; 
+}
 
+/* 设置玩家小鱼的分数 */
+void setScore(DWORD s) {
+	score = s;
+}
+
+/* 返回鱼群的数量 */
 int getFishSize() {
 	return ListSize(fishes);
 }

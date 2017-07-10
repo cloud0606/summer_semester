@@ -14,17 +14,6 @@ typedef enum _bool {
 	_FALSE,
 	_TRUE
 }BOOL;
-//
-#define FISH_MAX_LEVEL 4
-#define FISH_MAGNIFY 25
-
-//鱼的状态
-#define FISH_MOVED 0
-#define FISH_EAT_FISH 1
-#define FISH_BE_EATEN 2
-#define FISH_GROWUP 3
-#define FISH_SUCCEED 4
-#define FISH_ERROR 5
 
 //坐标
 typedef struct _fish_coord {
@@ -63,9 +52,6 @@ typedef struct _fish {
 /* 初始化鱼群 */
 int FishInit();
 
-/* 创建鱼群 */
-PLIST CreateFishSchool();
-
 /* 创建一条鱼 */
 Status CreateFish();
 
@@ -87,14 +73,19 @@ void DestroyFishByState();
 /* 返回第i条鱼 */
 PFISH getFishAt(int i);
 
+/* 返回鱼群的数量 */
 int getFishSize();
 
+/* 返回玩家小鱼的分数 */
 DWORD getScore();
 
+/* 设置玩家小鱼的分数 */
 void setScore(DWORD s);
 
+/* 返回玩家小鱼的等级 */
 DWORD getLevel();
 
+/* 设置玩家小鱼的等级 */
 void setLevel(FISH_LEVEL i);
 
 #endif // !FISH_H
