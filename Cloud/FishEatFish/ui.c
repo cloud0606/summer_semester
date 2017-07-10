@@ -5,22 +5,8 @@
 
 #pragma comment (lib, "Winmm.lib")
 
-/****************** 宏定义 *******************/
-
-#define TRANS_BK_COLOR   RGB(135,206,250)
-#define BITMAP_FILE_BK   "BK.bmp" //背景图
-#define BITMAP_FILE_PLAYER  "PLAYER.bmp" //玩家小鱼图文件名
-#define BITMAP_FILE_FISH_1  "FISH_1.bmp" //等级1小鱼文件名
-#define BITMAP_FILE_FISH_2  "FISH_2.bmp" //等级2小鱼文件名
-#define BITMAP_FILE_FISH_3  "FISH_3.bmp" //等级3小鱼文件名
-#define BITMAP_FILE_FISH_4  "FISH_4.bmp" //等级4小鱼文件名
-#define TIMER_ID	12340
-
-#define CLASS_NAME_BK  "bk_class"
-#define CLASS_NAME_PLAYER  "player_class"
-
-
 /****************** 全局变量 *******************/
+
 DWORD dwTimerElapse = 40;//时间间隔
 HWND hwndBackground;
 HWND hwndPlayer;
@@ -150,7 +136,7 @@ LONG BackgroundResizeAndMove(HWND hwnd, LPRECT lpRect)
 
 	SetWindowPos(hwndPlayer,
 		HWND_TOPMOST,/*该窗口位于其他所有窗口的顶部 ，HWND_BOTTOM(底部)*/
-		lpRect->left + 100, lpRect->top + 100,//设置窗口的horizontal,vertical位置
+		lpRect->left , lpRect->top ,//设置窗口的horizontal,vertical位置
 		lpRect->right - lpRect->left, lpRect->bottom - lpRect->top, //设置窗口width和height
 		SWP_SHOWWINDOW);//显示窗口
 
