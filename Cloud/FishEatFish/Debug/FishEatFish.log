@@ -1,3 +1,6 @@
-﻿  ui.c
+﻿  Fish.c
+c:\users\82759\documents\visual studio 2017\projects\fisheatfish\fisheatfish\fish.c(18): warning C4013: “time”未定义；假设外部返回 int
+c:\users\82759\documents\visual studio 2017\projects\fisheatfish\fisheatfish\fish.c(117): warning C4018: “<”: 有符号/无符号不匹配
+c:\users\82759\documents\visual studio 2017\projects\fisheatfish\fisheatfish\fish.c(122): warning C4018: “>”: 有符号/无符号不匹配
   FishEatFish.vcxproj -> C:\Users\82759\documents\visual studio 2017\Projects\FishEatFish\Debug\FishEatFish.exe
   FishEatFish.vcxproj -> C:\Users\82759\documents\visual studio 2017\Projects\FishEatFish\Debug\FishEatFish.pdb (Partial PDB)

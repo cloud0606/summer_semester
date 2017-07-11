@@ -1,9 +1,11 @@
 #include <windows.h>
+//#include <wingdi.h>
 #include "Fish.h"
 #include "ui.h"
 #include "LinkLIst.h"
 
 #pragma comment (lib, "Winmm.lib")
+#pragma comment(lib,"Msimg32.lib")
 
 /****************** 全局变量 *******************/
 
@@ -11,7 +13,10 @@ DWORD dwTimerElapse = 40;//时间间隔
 HWND hwndBackground;
 HWND hwndPlayer;
 HINSTANCE hinst;
-HBITMAP hbmpPlayer;
+HBITMAP hbmpPlayer_2;
+HBITMAP hbmpPlayer_3;
+HBITMAP hbmpPlayer_4;
+HBITMAP hbmpPlayer_MAX;
 HBITMAP hbmpBackground;
 HBITMAP hbmpFish_1;
 HBITMAP hbmpFish_2;
@@ -67,7 +72,7 @@ HWND BackgroundWindowCreate(HINSTANCE hinstance)
 
 	if (!SetLayeredWindowAttributes(
 		hwnd, TRANS_BK_COLOR,
-		100,//设置背景透明度
+		155,//设置背景透明度
 		LWA_ALPHA)) {
 		DWORD dwError = GetLastError();
 	}
@@ -79,10 +84,6 @@ HWND BackgroundWindowCreate(HINSTANCE hinstance)
 
 LONG BackgroundCreate(HWND hwnd)
 {
-
-	if (PlayerWindowRegister(hinst))
-		hwndPlayer = PlayerWindowCreate(hinst);
-
 	hbmpBackground = LoadImage(NULL, BITMAP_FILE_BK,
 		IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
 
@@ -135,7 +136,7 @@ LONG BackgroundResizeAndMove(HWND hwnd, LPRECT lpRect)
 {
 
 	SetWindowPos(hwndPlayer,
-		HWND_TOPMOST,/*该窗口位于其他所有窗口的顶部 ，HWND_BOTTOM(底部)*/
+		HWND_TOPMOST,/*该窗口位于其他所有窗口的顶部 HWND_BOTTOM，(底部)*/
 		lpRect->left , lpRect->top ,//设置窗口的horizontal,vertical位置
 		lpRect->right - lpRect->left, lpRect->bottom - lpRect->top, //设置窗口width和height
 		SWP_SHOWWINDOW);//显示窗口
@@ -300,44 +301,82 @@ LONG PlayerWindowPaint(HWND hwnd)
 
 	//鱼（玩家）
 	HDC hdc;
-	HDC hdcMem;
-	HDC hdcBitmapSrc;
+	HDC hdcMem_BK;
+	HDC hdcMem_FISH;
 	HBITMAP hBitmap;
 	BITMAP bmp;
 	//鱼（其他）
 	PFISH fish;
 	//背景
-	RECT rect;
+	RECT rect_BK;
 	//字体
 	HFONT hFont;
 	CHAR debug_info[100];
 
-	GetClientRect(hwnd, &rect);
+	//获取窗口大小
+    GetClientRect(hwnd, &rect_BK);
 	//鱼（玩家）
 	hdc = GetDC(hwnd);
-	hdcMem = CreateCompatibleDC(hdc);
+	hdcMem_BK = CreateCompatibleDC(hdc);
 	hBitmap = CreateCompatibleBitmap(hdc, // 不能是hdcMem，否则会变成黑白2色位图
-		rect.right - rect.left, rect.bottom - rect.top);
-	SelectObject(hdcMem, hBitmap);
-	hdcBitmapSrc = CreateCompatibleDC(hdc);
-
-
-	/****************  画背景  ********************/
-
-	FillRect(hdcMem, &rect, (HBRUSH)GetStockObject(WHITE_BRUSH));
+	rect_BK.right - rect_BK.left, rect_BK.bottom - rect_BK.top);
+	
+	///****************  画背景  ********************/
+	SelectObject(hdcMem_BK, hBitmap);
+	FillRect(hdcMem_BK, &rect_BK, (HBRUSH)GetStockObject(WHITE_BRUSH));//不出现重影
 
 	/****************   画鱼   ********************/
+	hdcMem_FISH = CreateCompatibleDC(hdc);
+	//选则hbmpPlayer位图为兼容dc的可见区域
+	switch (getLevel()) {
+	case FISH_LEV_2:
+		SelectObject(hdcMem_FISH, hbmpPlayer_2);
+		GetObject(hbmpPlayer_2, sizeof(BITMAP), &bmp);
+		TransparentBlt(hdcMem_BK,
+			ptPlayer.x, ptPlayer.y,
+			PLAYER_WIDTH*(getLevel() - 1 ), PLAYER_HEIGHT*(getLevel() - 1),
+			hdcMem_FISH,
+			0, 0, bmp.bmWidth, bmp.bmHeight,
+			RGB(255, 255, 255));
+		break;
 
-	SelectObject(hdcBitmapSrc, hbmpPlayer);
+	case FISH_LEV_3:
+		SelectObject(hdcMem_FISH, hbmpPlayer_3);
+		GetObject(hbmpPlayer_3, sizeof(BITMAP), &bmp);
+		TransparentBlt(hdcMem_BK,
+			ptPlayer.x, ptPlayer.y,
+			PLAYER_WIDTH*(getLevel() - 1), PLAYER_HEIGHT*(getLevel() - 1),
+			hdcMem_FISH,
+			0, 0, bmp.bmWidth, bmp.bmHeight,
+			RGB(255, 255, 255));
+		break;
 
-	GetObject(hbmpPlayer, sizeof(BITMAP), &bmp);
+	case FISH_LEV_4:
+		SelectObject(hdcMem_FISH, hbmpPlayer_4);
+		GetObject(hbmpPlayer_4, sizeof(BITMAP), &bmp);
+		TransparentBlt(hdcMem_BK,
+			ptPlayer.x, ptPlayer.y,
+			PLAYER_WIDTH*(getLevel() - 1), PLAYER_HEIGHT*(getLevel() - 1),
+			hdcMem_FISH,
+			0, 0, bmp.bmWidth, bmp.bmHeight,
+			RGB(255, 255, 255));
+		break;
 
-	StretchBlt(hdcMem,
-		ptPlayer.x, ptPlayer.y,
-		PLAYER_WIDTH, PLAYER_HEIGHT,
-		hdcBitmapSrc,
-		0, 0, bmp.bmWidth, bmp.bmHeight,
-		SRCCOPY);
+
+	case FISH_LEV_MAX:
+		SelectObject(hdcMem_FISH, hbmpPlayer_MAX);
+		GetObject(hbmpPlayer_MAX, sizeof(BITMAP), &bmp);
+		TransparentBlt(hdcMem_BK,
+			ptPlayer.x, ptPlayer.y,
+			PLAYER_WIDTH*(getLevel() - 1), PLAYER_HEIGHT*(getLevel() - 1),
+			hdcMem_FISH,
+			0, 0, bmp.bmWidth, bmp.bmHeight,
+			RGB(255, 255, 255));
+		break;
+	default:
+		break;
+	}
+	;
 
 	// 鱼（其他）
 	num = getFishSize();
@@ -346,94 +385,119 @@ LONG PlayerWindowPaint(HWND hwnd)
 		fish = getFishAt(i);
 		switch (fish->_fishlevel) {
 		case FISH_LEV_1:
-			SelectObject(hdcBitmapSrc, hbmpFish_1);
-
+			SelectObject(hdcMem_FISH, hbmpFish_1);
 			GetObject(hbmpFish_1, sizeof(BITMAP), &bmp);
-
-			StretchBlt(hdcMem,
+			//透明贴图
+			TransparentBlt(hdcMem_BK,
 				fish->_coord.x, fish->_coord.y,
 				fish->_rang._x, fish->_rang._y,
-				hdcBitmapSrc,
+				hdcMem_FISH,
 				0, 0, bmp.bmWidth, bmp.bmHeight,
-				SRCCOPY);
+				RGB(255, 255, 255));
 			break;
 
 		case FISH_LEV_2:
-			SelectObject(hdcBitmapSrc, hbmpFish_2);
-
+			SelectObject(hdcMem_FISH, hbmpFish_2);
 			GetObject(hbmpFish_2, sizeof(BITMAP), &bmp);
-
-			StretchBlt(hdcMem,
+			TransparentBlt(hdcMem_BK,
 				fish->_coord.x, fish->_coord.y,
 				fish->_rang._x, fish->_rang._y,
-				hdcBitmapSrc,
+				hdcMem_FISH,
 				0, 0, bmp.bmWidth, bmp.bmHeight,
-				SRCCOPY);
+				RGB(255, 255, 255));
 			break;
 
 		case FISH_LEV_3:
-			SelectObject(hdcBitmapSrc, hbmpFish_3);
-
+			SelectObject(hdcMem_FISH, hbmpFish_3);
 			GetObject(hbmpFish_3, sizeof(BITMAP), &bmp);
-
-			StretchBlt(hdcMem,
+			TransparentBlt(hdcMem_BK,
 				fish->_coord.x, fish->_coord.y,
 				fish->_rang._x, fish->_rang._y,
-				hdcBitmapSrc,
+				hdcMem_FISH,
 				0, 0, bmp.bmWidth, bmp.bmHeight,
-				SRCCOPY);
+				RGB(255, 255, 255));
 			break;
 
 		case FISH_LEV_4:
-			SelectObject(hdcBitmapSrc, hbmpFish_4);
-
+			SelectObject(hdcMem_FISH, hbmpFish_4);
 			GetObject(hbmpFish_4, sizeof(BITMAP), &bmp);
-
-			StretchBlt(hdcMem,
+			TransparentBlt(hdcMem_BK,
 				fish->_coord.x, fish->_coord.y,
 				fish->_rang._x, fish->_rang._y,
-				hdcBitmapSrc,
+				hdcMem_FISH,
 				0, 0, bmp.bmWidth, bmp.bmHeight,
-				SRCCOPY);
+				RGB(255, 255, 255));
 			break;
+			default:
+				break;
 		}
 	}
 
 	// 创建了一个字体对象
 	hFont = CreateFont(20, 0, 0, 0, FW_DONTCARE, 0, FALSE, 0, DEFAULT_CHARSET, OUT_OUTLINE_PRECIS,
-		CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, VARIABLE_PITCH, TEXT("Consolas"));
+		CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, VARIABLE_PITCH, TEXT("幼圆"));
 
 
-	wsprintf(debug_info, "FISH COUNT: %d\n SCORE：0x%p", num, getScore());
-	SelectObject(hdcMem, hFont);
-	SetTextColor(hdcMem, RGB(0, 0, 0));
-	TextOut(hdcMem, 10, 10, debug_info, strlen(debug_info));
+	wsprintf(debug_info, "视野中一共有%d\n条鱼 得分：0x%p 级别:%d", num, getScore(),getLevel());
+	SelectObject(hdcMem_BK, hFont);
+	SetTextColor(hdcMem_BK, RGB(205,92,92));
+	TextOut(hdcMem_BK, 10, 10, debug_info, strlen(debug_info));
 
 
 	// 拷贝到DC
 	BitBlt(hdc,
-		rect.left, rect.top,
-		rect.right - rect.left, rect.bottom - rect.top,
-		hdcMem,
+		rect_BK.left, rect_BK.top,
+		rect_BK.right - rect_BK.left, rect_BK.bottom - rect_BK.top,
+		hdcMem_BK,
 		0, 0,
 		SRCCOPY);
 
 	DeleteObject(hFont);
 	DeleteObject(hBitmap);
-	DeleteDC(hdcBitmapSrc);
-	DeleteDC(hdcMem);
+	DeleteDC(hdcMem_FISH);
+	DeleteDC(hdcMem_BK);
 	ReleaseDC(hwnd, hdc);
-	//DeleteDC(hdc);
+	DeleteDC(hdc);
 	return 0;
 }
 
 LONG PlayerCreate(HWND hwnd)
 {
 	//BITMAP bmp;
-	hbmpPlayer = LoadImage(NULL, BITMAP_FILE_PLAYER,
+	hbmpPlayer_2 = LoadImage(NULL, BITMAP_FILE_PLAYER2,
 		IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
 
-	if (hbmpPlayer == NULL)
+	if (hbmpPlayer_2 == NULL)
+	{
+		MessageBox(hwnd, "player bmp file not find", "ERROR!",
+			MB_OK | MB_ICONERROR);
+		ExitProcess(0);
+	}
+
+	hbmpPlayer_3 = LoadImage(NULL, BITMAP_FILE_PLAYER3,
+		IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+
+	if (hbmpPlayer_3 == NULL)
+	{
+		MessageBox(hwnd, "player bmp file not find", "ERROR!",
+			MB_OK | MB_ICONERROR);
+		ExitProcess(0);
+	}
+
+	hbmpPlayer_4 = LoadImage(NULL, BITMAP_FILE_PLAYER4,
+		IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+
+	if (hbmpPlayer_4 == NULL)
+	{
+		MessageBox(hwnd, "player bmp file not find", "ERROR!",
+			MB_OK | MB_ICONERROR);
+		ExitProcess(0);
+	}
+
+	hbmpPlayer_MAX = LoadImage(NULL, BITMAP_FILE_PLAYER5,
+		IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+
+	if (hbmpPlayer_MAX == NULL)
 	{
 		MessageBox(hwnd, "player bmp file not find", "ERROR!",
 			MB_OK | MB_ICONERROR);
@@ -502,8 +566,11 @@ LONG PlayerTimer(HWND hwnd)
 		return 0;
 	}
 
+	FishUpgrade();
+
 	DestroyFishByState();
 	// 1.5%的概率，随机产生鱼
+
 	if (rand() % 1000 < 150) {
 		CreateFish();
 	}
@@ -519,6 +586,7 @@ LONG CALLBACK PlayerWindowProc(HWND hwnd, UINT msg,
 		PlayerCreate(hwnd);
 
 	case WM_PAINT:
+		//BackgroundPaint(hwnd);
 		PlayerWindowPaint(hwnd);
 		break;
 
@@ -557,10 +625,14 @@ int WINAPI WinMain(
 	BOOL fGotMessage;
 	MSG msg;
 
+	if (PlayerWindowRegister(hinst))
+		hwndPlayer = PlayerWindowCreate(hinst);
+
 	if (BackGroundWindwowRegister(hinstance))
 		hwndBackground = BackgroundWindowCreate(hinstance);
 	else
 		return 0;
+
 
 	while ((fGotMessage = GetMessage(&msg, (HWND)NULL, 0, 0)) != 0
 		&& fGotMessage != -1) {

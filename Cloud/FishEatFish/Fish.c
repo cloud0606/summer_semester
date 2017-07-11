@@ -5,7 +5,7 @@
 
 /****************** 全局变量 *******************/
 DWORD score = 0;//玩家小鱼的分数
-DWORD level = 3;//玩家小鱼的等级
+DWORD level = 2;//玩家小鱼的等级
 PLIST fishes; //存储鱼群（不包括玩家小鱼）的链表
 
 /****************** 函数定义 *******************/
@@ -87,12 +87,33 @@ BOOL IsFishDead() {
 	int i, n;
 	PFISH pos;
 	n = ListSize(fishes);
+
+	//for (i = 0; i < n; i++) {
+	//	pos = (PFISH)getFishAt(i);
+	//	if (pos->_coord.x < ptPlayer.x  &&
+	//		pos->_coord.x + pos->_rang._x > ptPlayer.x  &&
+	//		pos->_coord.y  < ptPlayer.y + PLAYER_HEIGHT / 2 &&
+	//		pos->_coord.y + pos->_rang._y  > ptPlayer.y + PLAYER_HEIGHT / 2) {
+	//		if (pos->_fishlevel < getLevel())
+	//		{//玩家得分
+	//			score += FISH_SCORE_ADD * pos->_fishlevel;
+	//			pos->_fishlevel = FISH_LEV_0;
+	//		}
+	//		else if (pos->_fishlevel > getLevel()) {
+	//			//玩家小鱼死亡
+	//			setLevel(FISH_LEV_0);
+	//			return 1;
+	//		}
+	//	}
+	//}
+
 	for (i = 0; i < n; i++) {
 		pos = (PFISH)getFishAt(i);
-		if (pos->_coord.x < ptPlayer.x  &&
-			pos->_coord.x + pos->_rang._x > ptPlayer.x  &&
-			pos->_coord.y  < ptPlayer.y + PLAYER_HEIGHT / 2 &&
-			pos->_coord.y + pos->_rang._y  > ptPlayer.y + PLAYER_HEIGHT / 2) {
+		//判断位置位于玩家鱼嘴
+		if (pos->_coord.x + FISH_DEAD_CONTROL_X < ptPlayer.x  &&
+			pos->_coord.x + pos->_rang._x - FISH_DEAD_CONTROL_X > ptPlayer.x  &&
+			pos->_coord.y + FISH_DEAD_CONTROL_Y < ptPlayer.y + PLAYER_HEIGHT / 2 &&
+			pos->_coord.y + pos->_rang._y - FISH_DEAD_CONTROL_Y > ptPlayer.y + PLAYER_HEIGHT / 2) {
 			if (pos->_fishlevel < getLevel())
 			{//玩家得分
 				score += FISH_SCORE_ADD * pos->_fishlevel;
@@ -105,31 +126,30 @@ BOOL IsFishDead() {
 			}
 		}
 	}
-	return 0;
+		return 0;
 
-
+    
 }
 
 /* 鱼是否可以升级 */
-void FishUpgrade(PFISH player) {
-	switch (player->_fishlevel) {
+void FishUpgrade() {
+	switch (getLevel()) {
 	case FISH_LEV_1:
-		if (score > 30)
-			player->_fishlevel = FISH_LEV_2;
+		if (score > FISH_SCORE_ADD * FISH_UPGRADE*FISH_LEV_1)
+			setLevel(FISH_LEV_2);
 		break;
 	case FISH_LEV_2:
-		if (score > 30)
-			player->_fishlevel = FISH_LEV_3;
+		if (score >  FISH_SCORE_ADD * FISH_UPGRADE*FISH_LEV_2)
+			setLevel(FISH_LEV_3);
 		break;
 	case FISH_LEV_3:
-		if (score > 30)
-			player->_fishlevel = FISH_LEV_4;
+		if (score > FISH_SCORE_ADD * FISH_UPGRADE*FISH_LEV_3)
+			setLevel(FISH_LEV_4);
 		break;
 
 	case FISH_LEV_4:
-		if (score > 30)
-			player->_fishlevel = FISH_LEV_MAX;
-		break;
+		if (score > FISH_SCORE_ADD * FISH_UPGRADE*FISH_LEV_4)
+			setLevel(FISH_LEV_MAX);
 	default:
 		break;
 	}

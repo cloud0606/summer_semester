@@ -65,7 +65,7 @@ void IsFishOut();
 BOOL IsFishDead();
 
 /* 鱼是否可以升级 */
-void FishUpgrade(PFISH player);
+void FishUpgrade();
 
 /* 根据状态删除鱼 */
 void DestroyFishByState();
