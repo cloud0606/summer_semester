@@ -7,7 +7,9 @@
 DWORD score = 0;//玩家小鱼的分数
 DWORD level = 2;//玩家小鱼的等级
 PLIST fishes; //存储鱼群（不包括玩家小鱼）的链表
-
+DWORD Score_Update_2 = FISH_SCORE_ADD * FISH_UPGRADE;
+DWORD Score_Update_3 = 3* FISH_SCORE_ADD * FISH_UPGRADE;
+DWORD Score_Update_4 = 10* FISH_SCORE_ADD * FISH_UPGRADE;
 /****************** 函数定义 *******************/
 
 /* 初始化鱼群 */
@@ -29,18 +31,31 @@ Status CreateFish()
 	pfish = malloc(sizeof(FISH));
 	if (pfish == NULL)
 		return _ERROR;
-	if (y % 2 == 0) {//使左右两边都产生鱼
-		pfish->_coord.x = FISH_BOUNDARY_X;
-		pfish->_fishdir = _LEFT;
-	}
-	else {
-		pfish->_coord.x = 0;
-		pfish->_fishdir = _RIGHT;
-	}
+	pfish->_fishdir = _RIGHT;
+	pfish->_coord.x = 0;
 	pfish->_coord.y = y;
-	pfish->_rang._x = lev * FISH_MAGNIFY;
-	pfish->_rang._y = lev * FISH_MAGNIFY;
 	pfish->_fishlevel = lev;
+	switch (lev) {
+	case FISH_LEV_1:
+		pfish->_rang._x = 2 *lev * FISH_MAGNIFY;
+		pfish->_rang._y = lev * FISH_MAGNIFY;
+		break;
+	case FISH_LEV_2:
+		pfish->_rang._x =  lev * FISH_MAGNIFY;
+		pfish->_rang._y = lev * FISH_MAGNIFY;
+		break;
+	case FISH_LEV_3:
+		pfish->_rang._x =   lev * FISH_MAGNIFY - 10;
+		pfish->_rang._y = lev * FISH_MAGNIFY - 10;
+		break;
+	case FISH_LEV_4:
+		pfish->_rang._x = lev * FISH_MAGNIFY;
+		pfish->_rang._y = lev * FISH_MAGNIFY;
+		break;
+	
+	}
+
+
 	ListPushFront(fishes, pfish);
 	return _OK;
 }
@@ -87,45 +102,122 @@ BOOL IsFishDead() {
 	int i, n;
 	PFISH pos;
 	n = ListSize(fishes);
+	int x = 0;
+	int y = 0;
+	switch (getLevel()) {
+	case FISH_LEV_2:
+	case FISH_LEV_3:
+		x = ptPlayer.x;
+		y = ptPlayer.y;
+		break;
+	case FISH_LEV_4:
+		x = ptPlayer.x +15 ;
+		y = ptPlayer.y + 60;
+		break;
+	case FISH_LEV_MAX:
+		x = ptPlayer.x + 10;
+		y = ptPlayer.y + 50;
+		break;
+	default:
+		break;
+	}
 
-	//for (i = 0; i < n; i++) {
-	//	pos = (PFISH)getFishAt(i);
-	//	if (pos->_coord.x < ptPlayer.x  &&
-	//		pos->_coord.x + pos->_rang._x > ptPlayer.x  &&
-	//		pos->_coord.y  < ptPlayer.y + PLAYER_HEIGHT / 2 &&
-	//		pos->_coord.y + pos->_rang._y  > ptPlayer.y + PLAYER_HEIGHT / 2) {
-	//		if (pos->_fishlevel < getLevel())
-	//		{//玩家得分
-	//			score += FISH_SCORE_ADD * pos->_fishlevel;
-	//			pos->_fishlevel = FISH_LEV_0;
-	//		}
-	//		else if (pos->_fishlevel > getLevel()) {
-	//			//玩家小鱼死亡
-	//			setLevel(FISH_LEV_0);
-	//			return 1;
-	//		}
-	//	}
-	//}
-
+	
 	for (i = 0; i < n; i++) {
 		pos = (PFISH)getFishAt(i);
-		//判断位置位于玩家鱼嘴
-		if (pos->_coord.x + FISH_DEAD_CONTROL_X < ptPlayer.x  &&
-			pos->_coord.x + pos->_rang._x - FISH_DEAD_CONTROL_X > ptPlayer.x  &&
-			pos->_coord.y + FISH_DEAD_CONTROL_Y < ptPlayer.y + PLAYER_HEIGHT / 2 &&
-			pos->_coord.y + pos->_rang._y - FISH_DEAD_CONTROL_Y > ptPlayer.y + PLAYER_HEIGHT / 2) {
-			if (pos->_fishlevel < getLevel())
-			{//玩家得分
+		//判断位置位于玩家鱼嘴 
+		switch (pos->_fishlevel) {//以下参数慎改！！！！！！
+		case FISH_LEV_1:
+			if (pos->_coord.x + pos->_rang._x / 4 < x &&
+				pos->_coord.x + pos->_rang._x > x  &&
+				pos->_coord.y  < y + PLAYER_HEIGHT / 2 &&
+				pos->_coord.y + pos->_rang._y > y + PLAYER_HEIGHT / 2) {
+				if (pos->_fishlevel < getLevel())
+				{//玩家得分
+				 //播放背景音乐
+					CreateThread(NULL, 0, MUSIC_PLAY_FISH1, NULL, 0, NULL);
+					score += FISH_SCORE_ADD * pos->_fishlevel;
+					pos->_fishlevel = FISH_LEV_0;
+				}
+				else if (pos->_fishlevel > getLevel()) {
+					//玩家小鱼死亡
+					setLevel(FISH_LEV_0);
+					return 1;
+				}
+			}
+			break;
+
+		case FISH_LEV_2:
+			if (pos->_coord.x + pos->_rang._x / 3 < x  &&
+				pos->_coord.x + pos->_rang._x > x  &&
+				pos->_coord.y  < y + PLAYER_HEIGHT / 2 &&
+				pos->_coord.y + pos->_rang._y > y + PLAYER_HEIGHT / 2) {
+				if (pos->_fishlevel < getLevel())
+				{//玩家得分
+					CreateThread(NULL, 0, MUSIC_PLAY_FISH2, NULL, 0, NULL);
+					score += FISH_SCORE_ADD * pos->_fishlevel;
+					pos->_fishlevel = FISH_LEV_0;
+				}
+				else if (pos->_fishlevel > getLevel()) {
+					//玩家小鱼死亡
+					setLevel(FISH_LEV_0);
+					return 1;
+				}
+			}
+			break;
+
+		case FISH_LEV_3:
+			if (pos->_coord.x + pos->_rang._x / 6 < x  &&
+				pos->_coord.x + pos->_rang._x - pos->_rang._x / 6 > x  &&
+				pos->_coord.y + pos->_rang._y / 4 < y + PLAYER_HEIGHT / 2 &&
+				pos->_coord.y + pos->_rang._y - pos->_rang._y / 4 > y + PLAYER_HEIGHT / 2) {
+				if (pos->_fishlevel < getLevel())
+				{//玩家得分
+					CreateThread(NULL, 0, MUSIC_PLAY_FISH3, NULL, 0, NULL);
+					score += FISH_SCORE_ADD * pos->_fishlevel;
+					pos->_fishlevel = FISH_LEV_0;
+				}
+				else if (pos->_fishlevel > getLevel()) {
+					//玩家小鱼死亡
+					setLevel(FISH_LEV_0);
+					return 1;
+				}
+			}
+			break;
+
+		case FISH_LEV_4:
+			if (pos->_coord.x + pos->_rang._x / 8 < x  &&
+				pos->_coord.x + pos->_rang._x - pos->_rang._x / 8 > x  &&
+				pos->_coord.y + pos->_rang._y / 6 < y + PLAYER_HEIGHT / 2 &&
+				pos->_coord.y + pos->_rang._y - pos->_rang._y / 6 > y + PLAYER_HEIGHT / 2) {
+				if (pos->_fishlevel < getLevel())
+				{//玩家得分
+					CreateThread(NULL, 0, MUSIC_PLAY_FISH4, NULL, 0, NULL);
+					score += FISH_SCORE_ADD * pos->_fishlevel;
+					pos->_fishlevel = FISH_LEV_0;
+				}
+				else if (pos->_fishlevel > getLevel()) {
+					//玩家小鱼死亡
+					setLevel(FISH_LEV_0);
+					return 1;
+				}
+			}
+			break;
+		}//endswitch
+
+		if (getLevel() == FISH_MAX_LEVEL) {
+			if (pos->_coord.x + pos->_coord.x > ptPlayer.x &&
+				pos->_coord.x + pos->_coord.x < ptPlayer.x + PLAYER_WIDTH &&
+				pos->_coord.y  < ptPlayer.y + PLAYER_HEIGHT  &&
+				pos->_coord.y + pos->_rang._y >ptPlayer.y) {
+				CreateThread(NULL, 0, MUSIC_PLAY_FISH2, NULL, 0, NULL);
 				score += FISH_SCORE_ADD * pos->_fishlevel;
 				pos->_fishlevel = FISH_LEV_0;
 			}
-			else if (pos->_fishlevel > getLevel()) {
-				//玩家小鱼死亡
-				setLevel(FISH_LEV_0);
-				return 1;
-			}
 		}
-	}
+
+	}//endfor
+
 		return 0;
 
     
@@ -139,16 +231,16 @@ void FishUpgrade() {
 			setLevel(FISH_LEV_2);
 		break;
 	case FISH_LEV_2:
-		if (score >  FISH_SCORE_ADD * FISH_UPGRADE*FISH_LEV_2)
+		if (score >  Score_Update_2)
 			setLevel(FISH_LEV_3);
 		break;
 	case FISH_LEV_3:
-		if (score > FISH_SCORE_ADD * FISH_UPGRADE*FISH_LEV_3)
+		if (score > Score_Update_3)
 			setLevel(FISH_LEV_4);
 		break;
 
 	case FISH_LEV_4:
-		if (score > FISH_SCORE_ADD * FISH_UPGRADE*FISH_LEV_4)
+		if (score > Score_Update_4)
 			setLevel(FISH_LEV_MAX);
 	default:
 		break;

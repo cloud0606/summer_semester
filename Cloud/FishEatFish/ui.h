@@ -4,8 +4,8 @@
 #include <Windows.h>
 
 /****************** 宏定义 *******************/
-
-#define TRANS_BK_COLOR   RGB(135,206,250)
+#define TRANS_BK_COLOR   RGB(255,255,255)
+//#define TRANS_BK_COLOR   RGB(135,206,250)
 #define BITMAP_FILE_BK   "BK.bmp" //背景图
 #define BITMAP_FILE_PLAYER2  "PLAYER2.bmp" //玩家小鱼2级图文件名
 #define BITMAP_FILE_PLAYER3  "PLAYER3.bmp" //玩家小鱼3级图文件名
@@ -15,23 +15,25 @@
 #define BITMAP_FILE_FISH_2  "FISH_2.bmp" //等级2小鱼文件名
 #define BITMAP_FILE_FISH_3  "FISH_3.bmp" //等级3小鱼文件名
 #define BITMAP_FILE_FISH_4  "FISH_4.bmp" //等级4小鱼文件名
-#define TIMER_ID	12340
+#define TIMER_ID	42340
 
 #define CLASS_NAME_BK  "bk_class"
 #define CLASS_NAME_PLAYER  "player_class"
 
-//鱼群的参数
+//游戏的参数
 #define FISH_MOVE_STEP  3  //鱼群（不包括玩家）的移动步长
-#define FISH_MAGNIFY  25   //设置鱼群（不包括玩家）的放大倍数
+#define FISH_MAGNIFY  24   //设置鱼群（不包括玩家）的放大倍数
 #define FISH_MAX_LEVEL 4  //鱼群的最大等级
-#define FISH_MOVE_STEP_PLAYER 20 //玩家小鱼的移动步长
+#define FISH_MOVE_STEP_PLAYER 30 //玩家小鱼的移动步长
 #define FISH_SCORE_ADD 100 //设置吃掉小鱼后得分的幅度
 #define FISH_DEAD_CONTROL_X 0//控制玩家小鱼吃鱼的难度
 #define FISH_DEAD_CONTROL_Y 0//控制玩家小鱼吃鱼的难度
-#define FISH_UPGRADE 1 //控制玩家小鱼升级的难度
+#define FISH_UPGRADE 1 //控制玩家小鱼升级的难度  1为最简单
+#define FISH_CREAT_RATE 15//单位时间里产生的鱼的数量比率 （0 - 100）
+#define BK_MUSIC 2 //可选1 2 3 
 //游戏边界
-#define FISH_BOUNDARY_X  800
-#define FISH_BOUNDARY_Y  500
+#define FISH_BOUNDARY_X  1300
+#define FISH_BOUNDARY_Y  800
 
 //玩家小鱼的宽和高
 #define PLAYER_WIDTH 60
@@ -42,6 +44,16 @@
 POINT ptPlayer;
 
 /***************** 函数声明 ********************/
+/* 音乐播放相关函数 */
+DWORD WINAPI MUSIC_PLAY_BK(LPVOID lpParam);
+
+DWORD WINAPI MUSIC_PLAY_FISH1(LPVOID lpParam);
+
+DWORD WINAPI MUSIC_PLAY_FISH2(LPVOID lpParam);
+
+DWORD WINAPI MUSIC_PLAY_FISH3(LPVOID lpParam);
+
+DWORD WINAPI MUSIC_PLAY_FISH4(LPVOID lpParam);
 
 /* 背景窗口相关函数 */
 LONG CALLBACK BackGroundWindowProc(

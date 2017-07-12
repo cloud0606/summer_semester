@@ -5,7 +5,8 @@
 #include "LinkLIst.h"
 
 #pragma comment (lib, "Winmm.lib")
-#pragma comment(lib,"Msimg32.lib")
+#pragma comment(lib,"Msimg32.lib")//transparentblt
+#pragma  comment(lib,"WinMM.Lib")//背景音乐
 
 /****************** 全局变量 *******************/
 
@@ -22,6 +23,63 @@ HBITMAP hbmpFish_1;
 HBITMAP hbmpFish_2;
 HBITMAP hbmpFish_3;
 HBITMAP hbmpFish_4;
+
+
+DWORD WINAPI MUSIC_PLAY_BK(LPVOID lpParam) {
+	switch (BK_MUSIC) {
+	case 1:
+		PlaySound(TEXT("与你共乘.wav"), NULL, SND_FILENAME | SND_SYNC | SND_LOOP);
+		break;
+	case 2:
+		PlaySound(TEXT("可爱宝贝的声音.wav"), NULL, SND_FILENAME | SND_SYNC | SND_LOOP);
+		break;
+	case 3:
+		PlaySound(TEXT("气泡.wav"), NULL, SND_FILENAME | SND_SYNC | SND_LOOP);
+		break;
+	default:
+		break;
+	}
+}
+
+DWORD WINAPI MUSIC_PLAY_DEAD(LPVOID lpParam) {
+
+	mciSendString("close fish", 0, 0, 0);
+	mciSendStringA(TEXT("open dead.wav alias fish"), NULL, 0, NULL);
+	mciSendString("play fish", 0, 0, 0);
+	return 0;
+}
+
+DWORD WINAPI MUSIC_PLAY_FISH1(LPVOID lpParam) {
+
+	mciSendString("close fish", 0, 0, 0);
+	mciSendStringA(TEXT("open fish1.wav alias fish"), NULL, 0, NULL);
+	mciSendString("play fish", 0, 0, 0);
+	return 0;
+}
+
+DWORD WINAPI MUSIC_PLAY_FISH2(LPVOID lpParam) {
+
+	mciSendString("close fish", 0, 0, 0);
+	mciSendStringA(TEXT("open fish2.wav alias fish"), NULL, 0, NULL);
+	mciSendString("play fish", 0, 0, 0);
+	return 0;
+}
+
+DWORD WINAPI MUSIC_PLAY_FISH3(LPVOID lpParam) {
+
+	mciSendString("close fish", 0, 0, 0);
+	mciSendStringA(TEXT("open fish3.wav alias fish"), NULL, 0, NULL);
+	mciSendString("play fish", 0, 0, 0);
+	return 0;
+}
+
+DWORD WINAPI MUSIC_PLAY_FISH4(LPVOID lpParam) {
+
+	mciSendString("close fish4", 0, 0, 0);
+	mciSendStringA(TEXT("open fish4.wav alias fish"), NULL, 0, NULL);
+	mciSendString("play fish", 0, 0, 0);
+	return 0;
+}
 
 BOOL BackGroundWindwowRegister(HINSTANCE hinstance)
 {
@@ -72,8 +130,8 @@ HWND BackgroundWindowCreate(HINSTANCE hinstance)
 
 	if (!SetLayeredWindowAttributes(
 		hwnd, TRANS_BK_COLOR,
-		155,//设置背景透明度
-		LWA_ALPHA)) {
+		0,//设置背景透明度
+		LWA_COLORKEY)) {//LWA_ALPHA时,LWA_COLORKEY,LWA_ALPHA | LWA_COLORKEY
 		DWORD dwError = GetLastError();
 	}
 	ShowWindow(hwnd, SW_SHOW);
@@ -119,7 +177,7 @@ LONG BackgroundPaint(HWND hwnd)
 
 	StretchBlt(hdc,
 		rect.left, rect.top,
-		rect.right - rect.left, rect.bottom - rect.top,
+		rect.right - rect.left, rect.bottom - rect.top ,
 		hdcMem,
 		0, 0,
 		bmp.bmWidth, bmp.bmHeight,
@@ -136,7 +194,7 @@ LONG BackgroundResizeAndMove(HWND hwnd, LPRECT lpRect)
 {
 
 	SetWindowPos(hwndPlayer,
-		HWND_TOPMOST,/*该窗口位于其他所有窗口的顶部 HWND_BOTTOM，(底部)*/
+		HWND_TOPMOST,/*该窗口位于其他所有窗口的顶部 HWND_BOTTOM，离眼睛最近(底部)*/
 		lpRect->left , lpRect->top ,//设置窗口的horizontal,vertical位置
 		lpRect->right - lpRect->left, lpRect->bottom - lpRect->top, //设置窗口width和height
 		SWP_SHOWWINDOW);//显示窗口
@@ -286,7 +344,8 @@ HWND PlayerWindowCreate(HINSTANCE hinstance)
 
 	if (!SetLayeredWindowAttributes(
 		hwnd, TRANS_BK_COLOR,
-		255, LWA_COLORKEY | LWA_ALPHA))
+		255,
+		LWA_COLORKEY))
 	{
 		DWORD dwError = GetLastError();
 	}
@@ -325,7 +384,7 @@ LONG PlayerWindowPaint(HWND hwnd)
 	SelectObject(hdcMem_BK, hBitmap);
 	FillRect(hdcMem_BK, &rect_BK, (HBRUSH)GetStockObject(WHITE_BRUSH));//不出现重影
 
-	/****************   画鱼   ********************/
+	/****************   画玩家鱼   ********************/
 	hdcMem_FISH = CreateCompatibleDC(hdc);
 	//选则hbmpPlayer位图为兼容dc的可见区域
 	switch (getLevel()) {
@@ -334,7 +393,7 @@ LONG PlayerWindowPaint(HWND hwnd)
 		GetObject(hbmpPlayer_2, sizeof(BITMAP), &bmp);
 		TransparentBlt(hdcMem_BK,
 			ptPlayer.x, ptPlayer.y,
-			PLAYER_WIDTH*(getLevel() - 1 ), PLAYER_HEIGHT*(getLevel() - 1),
+			PLAYER_WIDTH, PLAYER_HEIGHT,
 			hdcMem_FISH,
 			0, 0, bmp.bmWidth, bmp.bmHeight,
 			RGB(255, 255, 255));
@@ -345,7 +404,7 @@ LONG PlayerWindowPaint(HWND hwnd)
 		GetObject(hbmpPlayer_3, sizeof(BITMAP), &bmp);
 		TransparentBlt(hdcMem_BK,
 			ptPlayer.x, ptPlayer.y,
-			PLAYER_WIDTH*(getLevel() - 1), PLAYER_HEIGHT*(getLevel() - 1),
+			PLAYER_WIDTH + 20, PLAYER_HEIGHT + 20,
 			hdcMem_FISH,
 			0, 0, bmp.bmWidth, bmp.bmHeight,
 			RGB(255, 255, 255));
@@ -356,7 +415,7 @@ LONG PlayerWindowPaint(HWND hwnd)
 		GetObject(hbmpPlayer_4, sizeof(BITMAP), &bmp);
 		TransparentBlt(hdcMem_BK,
 			ptPlayer.x, ptPlayer.y,
-			PLAYER_WIDTH*(getLevel() - 1), PLAYER_HEIGHT*(getLevel() - 1),
+			PLAYER_WIDTH + 40, PLAYER_HEIGHT + 40,
 			hdcMem_FISH,
 			0, 0, bmp.bmWidth, bmp.bmHeight,
 			RGB(255, 255, 255));
@@ -368,7 +427,7 @@ LONG PlayerWindowPaint(HWND hwnd)
 		GetObject(hbmpPlayer_MAX, sizeof(BITMAP), &bmp);
 		TransparentBlt(hdcMem_BK,
 			ptPlayer.x, ptPlayer.y,
-			PLAYER_WIDTH*(getLevel() - 1), PLAYER_HEIGHT*(getLevel() - 1),
+			PLAYER_WIDTH + 80, PLAYER_HEIGHT + 80,
 			hdcMem_FISH,
 			0, 0, bmp.bmWidth, bmp.bmHeight,
 			RGB(255, 255, 255));
@@ -378,7 +437,7 @@ LONG PlayerWindowPaint(HWND hwnd)
 	}
 	;
 
-	// 鱼（其他）
+	/****************   画鱼   ********************/
 	num = getFishSize();
 
 	for (i = 0; i < num; i++) {
@@ -461,11 +520,14 @@ LONG PlayerWindowPaint(HWND hwnd)
 	return 0;
 }
 
+
 LONG PlayerCreate(HWND hwnd)
 {
-	//BITMAP bmp;
-	hbmpPlayer_2 = LoadImage(NULL, BITMAP_FILE_PLAYER2,
-		IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+	//播放背景音乐
+	CreateThread(NULL, 0, MUSIC_PLAY_BK, NULL, 0, NULL);
+
+   hbmpPlayer_2 = LoadImage(NULL, BITMAP_FILE_PLAYER2,
+    IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
 
 	if (hbmpPlayer_2 == NULL)
 	{
@@ -560,7 +622,8 @@ LONG PlayerTimer(HWND hwnd)
 
 	if (IsFishDead()) {
 		KillTimer(hwnd, TIMER_ID);
-		MessageBox(hwnd, "天哪！小鱼被吃掉惹~~~", "ooooo..", 0);
+		CreateThread(NULL, 0, MUSIC_PLAY_DEAD, NULL, 0, NULL);
+		MessageBox(hwnd, "天哪！小鱼被吃掉惹~~~", "ooooo..", MB_OK);
 		ExitProcess(0);
 		DestroyFishByState();
 		return 0;
@@ -571,7 +634,7 @@ LONG PlayerTimer(HWND hwnd)
 	DestroyFishByState();
 	// 1.5%的概率，随机产生鱼
 
-	if (rand() % 1000 < 150) {
+	if (rand() % 100 < FISH_CREAT_RATE) {
 		CreateFish();
 	}
 	return 0;
@@ -591,6 +654,8 @@ LONG CALLBACK PlayerWindowProc(HWND hwnd, UINT msg,
 		break;
 
 	case WM_KEYDOWN:
+		//开挂
+		OnKeydown(hwnd, (UINT)wParam);
 		break;
 
 	case WM_LBUTTONDOWN:
