@@ -8,8 +8,8 @@ DWORD score = 0;//玩家小鱼的分数
 DWORD level = 2;//玩家小鱼的等级
 PLIST fishes; //存储鱼群（不包括玩家小鱼）的链表
 DWORD Score_Update_2 = FISH_SCORE_ADD * FISH_UPGRADE;
-DWORD Score_Update_3 = 3* FISH_SCORE_ADD * FISH_UPGRADE;
-DWORD Score_Update_4 = 10* FISH_SCORE_ADD * FISH_UPGRADE;
+DWORD Score_Update_3 = 6* FISH_SCORE_ADD * FISH_UPGRADE;
+DWORD Score_Update_4 = 20* FISH_SCORE_ADD * FISH_UPGRADE;
 /****************** 函数定义 *******************/
 
 /* 初始化鱼群 */
@@ -205,7 +205,7 @@ BOOL IsFishDead() {
 			break;
 		}//endswitch
 
-		if (getLevel() == FISH_MAX_LEVEL) {
+	/*	if (getLevel() == FISH_MAX_LEVEL) {
 			if (pos->_coord.x + pos->_coord.x > ptPlayer.x &&
 				pos->_coord.x + pos->_coord.x < ptPlayer.x + PLAYER_WIDTH &&
 				pos->_coord.y  < ptPlayer.y + PLAYER_HEIGHT  &&
@@ -214,7 +214,7 @@ BOOL IsFishDead() {
 				score += FISH_SCORE_ADD * pos->_fishlevel;
 				pos->_fishlevel = FISH_LEV_0;
 			}
-		}
+		}*/
 
 	}//endfor
 

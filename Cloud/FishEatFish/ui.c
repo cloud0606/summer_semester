@@ -10,7 +10,7 @@
 
 /****************** 全局变量 *******************/
 
-DWORD dwTimerElapse = 40;//时间间隔
+DWORD dwTimerElapse = 20;//时间间隔
 HWND hwndBackground;
 HWND hwndPlayer;
 HINSTANCE hinst;
@@ -28,13 +28,13 @@ HBITMAP hbmpFish_4;
 DWORD WINAPI MUSIC_PLAY_BK(LPVOID lpParam) {
 	switch (BK_MUSIC) {
 	case 1:
-		PlaySound(TEXT("与你共乘.wav"), NULL, SND_FILENAME | SND_SYNC | SND_LOOP);
+		PlaySound(TEXT("与你共乘.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_LOOP);
 		break;
 	case 2:
-		PlaySound(TEXT("可爱宝贝的声音.wav"), NULL, SND_FILENAME | SND_SYNC | SND_LOOP);
+		PlaySound(TEXT("可爱宝贝的声音.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_SYNC);
 		break;
 	case 3:
-		PlaySound(TEXT("气泡.wav"), NULL, SND_FILENAME | SND_SYNC | SND_LOOP);
+		PlaySound(TEXT("气泡.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_LOOP);
 		break;
 	default:
 		break;
@@ -633,7 +633,7 @@ LONG PlayerTimer(HWND hwnd)
 
 	DestroyFishByState();
 	// 1.5%的概率，随机产生鱼
-
+	
 	if (rand() % 100 < FISH_CREAT_RATE) {
 		CreateFish();
 	}

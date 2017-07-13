@@ -15,22 +15,22 @@
 #define BITMAP_FILE_FISH_2  "FISH_2.bmp" //等级2小鱼文件名
 #define BITMAP_FILE_FISH_3  "FISH_3.bmp" //等级3小鱼文件名
 #define BITMAP_FILE_FISH_4  "FISH_4.bmp" //等级4小鱼文件名
-#define TIMER_ID	42340
+#define TIMER_ID	12345
 
 #define CLASS_NAME_BK  "bk_class"
 #define CLASS_NAME_PLAYER  "player_class"
 
-//游戏的参数
-#define FISH_MOVE_STEP  3  //鱼群（不包括玩家）的移动步长
-#define FISH_MAGNIFY  24   //设置鱼群（不包括玩家）的放大倍数
-#define FISH_MAX_LEVEL 4  //鱼群的最大等级
+//可更改的游戏参数
+#define FISH_MOVE_STEP  2  //鱼群（不包括玩家）的移动步长 (1-5)最适合
 #define FISH_MOVE_STEP_PLAYER 30 //玩家小鱼的移动步长
 #define FISH_SCORE_ADD 100 //设置吃掉小鱼后得分的幅度
-#define FISH_DEAD_CONTROL_X 0//控制玩家小鱼吃鱼的难度
-#define FISH_DEAD_CONTROL_Y 0//控制玩家小鱼吃鱼的难度
+#define FISH_UPGRADE 1 //控制玩家小鱼升级的难度  1为最简单
+#define FISH_MAGNIFY  24   //设置鱼群（不包括玩家）的放大倍数
+#define FISH_MAX_LEVEL 4  //鱼群的最大等级
 #define FISH_UPGRADE 1 //控制玩家小鱼升级的难度  1为最简单
 #define FISH_CREAT_RATE 15//单位时间里产生的鱼的数量比率 （0 - 100）
-#define BK_MUSIC 2 //可选1 2 3 
+#define BK_MUSIC 1 //可选1 2 3 
+
 //游戏边界
 #define FISH_BOUNDARY_X  1300
 #define FISH_BOUNDARY_Y  800
