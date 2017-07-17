@@ -22,7 +22,7 @@
 
 //可更改的游戏参数
 #define FISH_MOVE_STEP  2  //鱼群（不包括玩家）的移动步长 (1-5)最适合
-#define FISH_MOVE_STEP_PLAYER 30 //玩家小鱼的移动步长
+#define FISH_MOVE_STEP_PLAYER 9 //玩家小鱼的移动步长
 #define FISH_SCORE_ADD 100 //设置吃掉小鱼后得分的幅度
 #define FISH_UPGRADE 1 //控制玩家小鱼升级的难度  1为最简单
 #define FISH_MAGNIFY  24   //设置鱼群（不包括玩家）的放大倍数

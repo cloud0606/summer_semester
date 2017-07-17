@@ -23,7 +23,7 @@ HBITMAP hbmpFish_1;
 HBITMAP hbmpFish_2;
 HBITMAP hbmpFish_3;
 HBITMAP hbmpFish_4;
-
+BOOL move[4] = { FALSE };
 
 DWORD WINAPI MUSIC_PLAY_BK(LPVOID lpParam) {
 	switch (BK_MUSIC) {
@@ -177,7 +177,7 @@ LONG BackgroundPaint(HWND hwnd)
 
 	StretchBlt(hdc,
 		rect.left, rect.top,
-		rect.right - rect.left, rect.bottom - rect.top ,
+		rect.right - rect.left, rect.bottom - rect.top,
 		hdcMem,
 		0, 0,
 		bmp.bmWidth, bmp.bmHeight,
@@ -195,7 +195,7 @@ LONG BackgroundResizeAndMove(HWND hwnd, LPRECT lpRect)
 
 	SetWindowPos(hwndPlayer,
 		HWND_TOPMOST,/*该窗口位于其他所有窗口的顶部 HWND_BOTTOM，离眼睛最近(底部)*/
-		lpRect->left , lpRect->top ,//设置窗口的horizontal,vertical位置
+		lpRect->left, lpRect->top,//设置窗口的horizontal,vertical位置
 		lpRect->right - lpRect->left, lpRect->bottom - lpRect->top, //设置窗口width和height
 		SWP_SHOWWINDOW);//显示窗口
 
@@ -208,6 +208,23 @@ LONG OnKeydown(HWND hwnd, UINT vk)
 {
 	UINT key = vk;
 	switch (key)
+	{
+	case VK_LEFT:
+		move[0] = TRUE;
+		break;
+	case VK_UP:
+		move[1] = TRUE;
+		break;
+	case VK_RIGHT:
+		move[2] = TRUE;
+		break;
+	case VK_DOWN:
+		move[3] = TRUE;
+		break;
+	default:
+		break;
+	}
+	/*switch (key)
 	{
 	case VK_LEFT:
 		ptPlayer.x -= FISH_MOVE_STEP_PLAYER;
@@ -235,6 +252,58 @@ LONG OnKeydown(HWND hwnd, UINT vk)
 		break;
 	default:
 		break;
+	}*/
+	return 0;
+}
+
+LONG OnKeyup(HWND hwnd, UINT vk)
+{
+	UINT key = vk;
+	switch (key)
+	{
+	case VK_LEFT:
+		move[0] = FALSE;
+		break;
+	case VK_UP:
+		move[1] = FALSE;
+		break;
+	case VK_RIGHT:
+		move[2] = FALSE;
+		break;
+	case VK_DOWN:
+		move[3] = FALSE;
+		break;
+	default:
+		break;
+	}
+	return 0;
+}
+
+LONG ChangeFishCoord()
+{
+	if (move[0] == TRUE) {
+		ptPlayer.x -= FISH_MOVE_STEP_PLAYER;
+		if (ptPlayer.x < 0)
+			ptPlayer.x = 0;
+		PlayerWindowPaint(hwndPlayer);
+	}
+	if (move[1] == TRUE) {
+		ptPlayer.y -= FISH_MOVE_STEP_PLAYER;
+		if (ptPlayer.y < 0)
+			ptPlayer.y = 0;
+		PlayerWindowPaint(hwndPlayer);
+	}
+	if (move[2] == TRUE) {
+		ptPlayer.x += FISH_MOVE_STEP_PLAYER;
+		if (ptPlayer.x + PLAYER_WIDTH > FISH_BOUNDARY_X)
+			ptPlayer.x = FISH_BOUNDARY_X - PLAYER_WIDTH;
+		PlayerWindowPaint(hwndPlayer);
+	}
+	if (move[3] == TRUE) {
+		ptPlayer.y += FISH_MOVE_STEP_PLAYER;
+		if (ptPlayer.y + PLAYER_HEIGHT > FISH_BOUNDARY_Y)
+			ptPlayer.y = FISH_BOUNDARY_Y - PLAYER_HEIGHT;
+		PlayerWindowPaint(hwndPlayer);
 	}
 	return 0;
 }
@@ -280,10 +349,8 @@ LONG CALLBACK BackGroundWindowProc(
 		OnKeydown(hwnd, (UINT)wParam);
 		break;
 
-	case WM_LBUTTONDOWN:
-		break;
-
-	case WM_TIMER:
+	case WM_KEYUP:
+		OnKeyup(hwnd, (UINT)wParam);
 		break;
 
 	case WM_DESTROY:
@@ -373,13 +440,13 @@ LONG PlayerWindowPaint(HWND hwnd)
 	CHAR debug_info[100];
 
 	//获取窗口大小
-    GetClientRect(hwnd, &rect_BK);
+	GetClientRect(hwnd, &rect_BK);
 	//鱼（玩家）
 	hdc = GetDC(hwnd);
 	hdcMem_BK = CreateCompatibleDC(hdc);
 	hBitmap = CreateCompatibleBitmap(hdc, // 不能是hdcMem，否则会变成黑白2色位图
-	rect_BK.right - rect_BK.left, rect_BK.bottom - rect_BK.top);
-	
+		rect_BK.right - rect_BK.left, rect_BK.bottom - rect_BK.top);
+
 	///****************  画背景  ********************/
 	SelectObject(hdcMem_BK, hBitmap);
 	FillRect(hdcMem_BK, &rect_BK, (HBRUSH)GetStockObject(WHITE_BRUSH));//不出现重影
@@ -487,8 +554,8 @@ LONG PlayerWindowPaint(HWND hwnd)
 				0, 0, bmp.bmWidth, bmp.bmHeight,
 				RGB(255, 255, 255));
 			break;
-			default:
-				break;
+		default:
+			break;
 		}
 	}
 
@@ -497,9 +564,9 @@ LONG PlayerWindowPaint(HWND hwnd)
 		CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, VARIABLE_PITCH, TEXT("幼圆"));
 
 
-	wsprintf(debug_info, "视野中一共有%d\n条鱼 得分：0x%p 级别:%d", num, getScore(),getLevel());
+	wsprintf(debug_info, "视野中一共有%d\n条鱼 得分：0x%p 级别:%d", num, getScore(), getLevel());
 	SelectObject(hdcMem_BK, hFont);
-	SetTextColor(hdcMem_BK, RGB(205,92,92));
+	SetTextColor(hdcMem_BK, RGB(205, 92, 92));
 	TextOut(hdcMem_BK, 10, 10, debug_info, strlen(debug_info));
 
 
@@ -526,8 +593,8 @@ LONG PlayerCreate(HWND hwnd)
 	//播放背景音乐
 	CreateThread(NULL, 0, MUSIC_PLAY_BK, NULL, 0, NULL);
 
-   hbmpPlayer_2 = LoadImage(NULL, BITMAP_FILE_PLAYER2,
-    IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+	hbmpPlayer_2 = LoadImage(NULL, BITMAP_FILE_PLAYER2,
+		IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
 
 	if (hbmpPlayer_2 == NULL)
 	{
@@ -633,7 +700,7 @@ LONG PlayerTimer(HWND hwnd)
 
 	DestroyFishByState();
 	// 1.5%的概率，随机产生鱼
-	
+
 	if (rand() % 100 < FISH_CREAT_RATE) {
 		CreateFish();
 	}
@@ -649,19 +716,15 @@ LONG CALLBACK PlayerWindowProc(HWND hwnd, UINT msg,
 		PlayerCreate(hwnd);
 
 	case WM_PAINT:
-		//BackgroundPaint(hwnd);
 		PlayerWindowPaint(hwnd);
 		break;
 
 	case WM_KEYDOWN:
-		//开挂
-		OnKeydown(hwnd, (UINT)wParam);
-		break;
-
-	case WM_LBUTTONDOWN:
+		//OnKeydown(hwnd, (UINT)wParam);
 		break;
 
 	case WM_TIMER:
+		ChangeFishCoord();
 		PlayerTimer(hwnd);
 		PlayerWindowPaint(hwnd);
 		break;
@@ -692,12 +755,13 @@ int WINAPI WinMain(
 
 	if (PlayerWindowRegister(hinst))
 		hwndPlayer = PlayerWindowCreate(hinst);
+	else
+		return 0;
 
 	if (BackGroundWindwowRegister(hinstance))
 		hwndBackground = BackgroundWindowCreate(hinstance);
 	else
 		return 0;
-
 
 	while ((fGotMessage = GetMessage(&msg, (HWND)NULL, 0, 0)) != 0
 		&& fGotMessage != -1) {

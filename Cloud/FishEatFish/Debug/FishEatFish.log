@@ -1,14 +1,14 @@
 ﻿  ui.c
   Fish.c
 c:\users\82759\documents\visual studio 2017\projects\cloud\fisheatfish\fish.c(20): warning C4013: “time”未定义；假设外部返回 int
-c:\users\82759\documents\visual studio 2017\projects\cloud\fisheatfish\fish.c(135): warning C4018: “<”: 有符号/无符号不匹配
-c:\users\82759\documents\visual studio 2017\projects\cloud\fisheatfish\fish.c(142): warning C4018: “>”: 有符号/无符号不匹配
-c:\users\82759\documents\visual studio 2017\projects\cloud\fisheatfish\fish.c(155): warning C4018: “<”: 有符号/无符号不匹配
-c:\users\82759\documents\visual studio 2017\projects\cloud\fisheatfish\fish.c(161): warning C4018: “>”: 有符号/无符号不匹配
-c:\users\82759\documents\visual studio 2017\projects\cloud\fisheatfish\fish.c(174): warning C4018: “<”: 有符号/无符号不匹配
-c:\users\82759\documents\visual studio 2017\projects\cloud\fisheatfish\fish.c(180): warning C4018: “>”: 有符号/无符号不匹配
-c:\users\82759\documents\visual studio 2017\projects\cloud\fisheatfish\fish.c(193): warning C4018: “<”: 有符号/无符号不匹配
-c:\users\82759\documents\visual studio 2017\projects\cloud\fisheatfish\fish.c(199): warning C4018: “>”: 有符号/无符号不匹配
+c:\users\82759\documents\visual studio 2017\projects\cloud\fisheatfish\fish.c(159): warning C4018: “<”: 有符号/无符号不匹配
+c:\users\82759\documents\visual studio 2017\projects\cloud\fisheatfish\fish.c(166): warning C4018: “>”: 有符号/无符号不匹配
+c:\users\82759\documents\visual studio 2017\projects\cloud\fisheatfish\fish.c(179): warning C4018: “<”: 有符号/无符号不匹配
+c:\users\82759\documents\visual studio 2017\projects\cloud\fisheatfish\fish.c(185): warning C4018: “>”: 有符号/无符号不匹配
+c:\users\82759\documents\visual studio 2017\projects\cloud\fisheatfish\fish.c(198): warning C4018: “<”: 有符号/无符号不匹配
+c:\users\82759\documents\visual studio 2017\projects\cloud\fisheatfish\fish.c(204): warning C4018: “>”: 有符号/无符号不匹配
+c:\users\82759\documents\visual studio 2017\projects\cloud\fisheatfish\fish.c(217): warning C4018: “<”: 有符号/无符号不匹配
+c:\users\82759\documents\visual studio 2017\projects\cloud\fisheatfish\fish.c(223): warning C4018: “>”: 有符号/无符号不匹配
   正在生成代码...
 c:\users\82759\documents\visual studio 2017\projects\cloud\fisheatfish\ui.c(42): warning C4716: “MUSIC_PLAY_BK”: 必须返回一个值
   FishEatFish.vcxproj -> C:\Users\82759\Documents\Visual Studio 2017\Projects\Cloud\Debug\FishEatFish.exe

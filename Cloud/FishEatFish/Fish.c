@@ -8,8 +8,8 @@ DWORD score = 0;//玩家小鱼的分数
 DWORD level = 2;//玩家小鱼的等级
 PLIST fishes; //存储鱼群（不包括玩家小鱼）的链表
 DWORD Score_Update_2 = FISH_SCORE_ADD * FISH_UPGRADE;
-DWORD Score_Update_3 = 6* FISH_SCORE_ADD * FISH_UPGRADE;
-DWORD Score_Update_4 = 20* FISH_SCORE_ADD * FISH_UPGRADE;
+DWORD Score_Update_3 = 6 * FISH_SCORE_ADD * FISH_UPGRADE;
+DWORD Score_Update_4 = 20 * FISH_SCORE_ADD * FISH_UPGRADE;
 /****************** 函数定义 *******************/
 
 /* 初始化鱼群 */
@@ -37,22 +37,22 @@ Status CreateFish()
 	pfish->_fishlevel = lev;
 	switch (lev) {
 	case FISH_LEV_1:
-		pfish->_rang._x = 2 *lev * FISH_MAGNIFY;
+		pfish->_rang._x = 2 * lev * FISH_MAGNIFY;
 		pfish->_rang._y = lev * FISH_MAGNIFY;
 		break;
 	case FISH_LEV_2:
-		pfish->_rang._x =  lev * FISH_MAGNIFY;
+		pfish->_rang._x = lev * FISH_MAGNIFY;
 		pfish->_rang._y = lev * FISH_MAGNIFY;
 		break;
 	case FISH_LEV_3:
-		pfish->_rang._x =   lev * FISH_MAGNIFY - 10;
+		pfish->_rang._x = lev * FISH_MAGNIFY - 10;
 		pfish->_rang._y = lev * FISH_MAGNIFY - 10;
 		break;
 	case FISH_LEV_4:
 		pfish->_rang._x = lev * FISH_MAGNIFY;
 		pfish->_rang._y = lev * FISH_MAGNIFY;
 		break;
-	
+
 	}
 
 
@@ -62,18 +62,42 @@ Status CreateFish()
 
 /* 移动鱼群的位置 */
 Status MoveFishSchool() {
+	static int count = 0;
 	PFISH pfish;
 	int k, i, sum;
 	sum = getFishSize();
+
 	for (i = 0; i < sum; i++) {
-		k = rand() % FISH_MAX_LEVEL - 2;
+		k = rand() % 3;
 		pfish = ListGetAt(fishes, i);
 		pfish->_coord.x += FISH_MOVE_STEP;
-		if (i % 2 == 0)
-			pfish->_coord.y += k* FISH_MOVE_STEP;
-		else
-			pfish->_coord.y -= k* FISH_MOVE_STEP;
+		if (count <= 10) {
+			if (count < 5) {
+				if (i % 2 == 1)
+					pfish->_coord.y += k;
+				else
+					pfish->_coord.y -= k;
+			}
+			else {
+				if (i % 2 == 1)
+					pfish->_coord.y -= k;
+				else
+					pfish->_coord.y += k;
+			}
+			count++;
+			if (count == 10)
+				count = 0;
+		}
 	}
+	//for (i = 0; i < sum; i++) {
+	//	k = rand() % FISH_MAX_LEVEL - 2;
+	//	pfish = ListGetAt(fishes, i);
+	//	pfish->_coord.x += FISH_MOVE_STEP;
+	//	if (i % 2 == 1)
+	//		pfish->_coord.y += k* FISH_MOVE_STEP;
+	//	else
+	//		pfish->_coord.y -= k* FISH_MOVE_STEP;
+	//}
 	return _OK;
 }
 
@@ -111,7 +135,7 @@ BOOL IsFishDead() {
 		y = ptPlayer.y;
 		break;
 	case FISH_LEV_4:
-		x = ptPlayer.x +15 ;
+		x = ptPlayer.x + 15;
 		y = ptPlayer.y + 60;
 		break;
 	case FISH_LEV_MAX:
@@ -122,7 +146,7 @@ BOOL IsFishDead() {
 		break;
 	}
 
-	
+
 	for (i = 0; i < n; i++) {
 		pos = (PFISH)getFishAt(i);
 		//判断位置位于玩家鱼嘴 
@@ -218,9 +242,9 @@ BOOL IsFishDead() {
 
 	}//endfor
 
-		return 0;
+	return 0;
 
-    
+
 }
 
 /* 鱼是否可以升级 */
@@ -231,7 +255,7 @@ void FishUpgrade() {
 			setLevel(FISH_LEV_2);
 		break;
 	case FISH_LEV_2:
-		if (score >  Score_Update_2)
+		if (score > Score_Update_2)
 			setLevel(FISH_LEV_3);
 		break;
 	case FISH_LEV_3:
@@ -287,7 +311,7 @@ void setLevel(FISH_LEVEL i) {
 
 /* 返回玩家小鱼的分数 */
 DWORD getScore() {
-	return score; 
+	return score;
 }
 
 /* 设置玩家小鱼的分数 */
