@@ -1,6 +1,5 @@
-import startpage
 import ColorfulRect
-
+import startpage
 startpage.DrawStarPage()
-ColorfulRect.gameproc()
+ColorfulRect.GamePro()
 

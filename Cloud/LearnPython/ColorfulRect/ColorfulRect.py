@@ -1,14 +1,25 @@
 import pygame
+import random
 from pygame.locals import *
 from sys import exit
-#from pygame.color import THECOLORS #颜色
-#import threading
 #全局变量
 
 color = {
     'pink': (255, 193, 193),#'pink'
     'blue': (135, 206, 250),# 'blue'
     'green': (154, 255, 154),#'green'
+}
+
+color_n = {
+    666: (255, 193, 193),#'pink'
+    667: (135, 206, 250),# 'blue'
+    668: (154, 255, 154),#'green'
+}
+
+color_ntoc = {
+    666: 'pink',
+    667: 'blue',
+    668: 'green',
 }
 #控制窗口
 wind_status = {#1:小方块是dead/live 2：下方大矩形stop/move
@@ -19,7 +30,7 @@ wind_status = {#1:小方块是dead/live 2：下方大矩形stop/move
    'smalltriangle': 1,
    'colorline':1,
     'blackwood':1,
-   'movespeed':3,
+   'movespeed':3.5,
 }
 #控制关卡
 levelcontrol = {
@@ -28,9 +39,6 @@ levelcontrol = {
     'transcolorline':1,
     'blackwood':1
 }
-
-pygame.init()
-clock = pygame.time.Clock()
 
 class Rect_ME :
     def __init__(self,x,y,v,a,w,h,c,ys):
@@ -63,7 +71,7 @@ class Rect_ME :
         # 看是否撞变色线
         if self.x <= col_x and \
                 self.x + self.width/20  >= col_x:
-                self.color = col
+                self.color = color_ntoc[col]
 
     def onKeyDown(self):
        # time_passed = clock.tick()
@@ -105,7 +113,7 @@ class Rect_ME :
         pygame.draw.rect(screen, color[self.color ], myRect, 0)
 
 class Triangle:
-    def __init__(self,x,y,h,w,l,n,d,inte,of,op):
+    def __init__(self,x,y,h,w,l,n,d,inte,of,op,againx):
         self.x = x
         self.y = y
         self.h = h
@@ -116,6 +124,7 @@ class Triangle:
         self.interval = inte
         self.offset_foot = of
         self.offset_peak =op
+        self.againx = againx
 
     def moveControl(self):
         if wind_status['triangle']:
@@ -153,13 +162,11 @@ class Triangle:
             x += self.interval
             i += 1
             col += 1
-        if x + w < 0.:
-            self.x = 960
-
-
+        #if x + w < 0.:
+           # self.x = self.againx
 
 class RectBottom:
-    def __init__(self,x,y,h,w,xw,yw,ww):
+    def __init__(self,x,y,h,w,xw,yw,ww,againx):
         self.x = x
         self.y = y
         self.height = h
@@ -167,6 +174,7 @@ class RectBottom:
         self.x_white = xw
         self.y_white = yw
         self.width_white =ww
+        self.againx = againx
 
     def DrawRectBottom(self,screen):
         if levelcontrol['whitetrap']:
@@ -179,23 +187,30 @@ class RectBottom:
                                        self.width  - self.width_white - self.x_white, 320)  # 下半个窗口的数据
             pygame.draw.rect(screen, [105, 105, 105], rect_bottom2, 0)
 
-            #if  self.x_white + self.width_white < 0.:
-            #    self.x_white = 960.
+           # if  self.x_white + self.width_white < 0.:
+           #     self.x_white = self.againx
         else:
             pygame.draw.rect(screen, [105, 105, 105], [self.x, self.y, self.width, self.height], 0)
 
 class TransColorLine:
-    def __init__(self,x,y,w,h,col):
+    color = 668
+    setx = 1300
+    def __init__(self,x,y,w,h,againx):
         self.x = x
         self.y = y
         self.width = w
         self.height = h
-        self.color = col
+        self.againx = againx
 
     def DrawTranscolorLine(self,screen):
         # 画三条彩线 方块穿过后会变色
-        if not levelcontrol['transcolorline']:
+        if not levelcontrol['transcolorline'] :
             return
+
+        if self.x == self.setx:
+            self.color += 1
+            if self.color == 669:
+                self.color = 666
 
         if wind_status['colorline']:
              self.x -= wind_status['movespeed']
@@ -203,16 +218,13 @@ class TransColorLine:
         start_pos = (self.x, self.y)
         end_pos = (self.x, self.height)
 
-        pygame.draw.line(screen, color[self.color], start_pos, end_pos, self.width)
-
-        #if self.x < 0.:
-         #   self.x = 960
+        pygame.draw.line(screen, color_n[self.color], start_pos, end_pos, self.width)
 
 class BlackWood:
     def __init__(self,x,y,w,h):
         self.x = x
         self.y = y
-        self. width = w
+        self.width = w
         self.height = h
 
     def DrawBlackWood(self,screen,rect,RectBottom):
@@ -224,17 +236,20 @@ class BlackWood:
         y = self.y
         h = self.height
         w = self.width
-        rect_BlackWood = pygame.Rect(x, y, w, h)  # 下半个窗口的数据
+        rxl = rect.x
+        rxr= rect.x + rect.width
+        rect_BlackWood = pygame.Rect((x, y),(w, h))  # 下半个窗口的数据
         pygame.draw.rect(screen, [0, 0, 0], rect_BlackWood, 0)
-        if rect.x + rect.width >= x and \
-                        rect.x < x + w and \
-                                rect.y + rect.height < y + h:
-            rect.y_safe = y - rect.height
-        else:
-            rect.y_safe = RectBottom.height - rect.height
+
 
         #if x + w < 0.:
          #   self.x = 960
+
+def ReachBB(rect,bb,RectBottom):
+    if rect.x <= bb.x + bb.width and rect.x + rect.width >= bb.x  and rect.y < bb.y:
+        rect.y_safe = bb.y - rect.height
+    else:
+        rect.y_safe = RectBottom.y - rect.height
 
 def HitTriangle(rect,triangle):
         '小方块是否被长三角碰撞'
@@ -255,8 +270,8 @@ def HitTriangle(rect,triangle):
                 yd = rect.y + rect.height
                 Tx1 = triangle.x + num * triangle.interval
                 Txr = triangle.x + num * triangle.interval + triangle.w
-                Tyu = triangle.y
-                Tyd = triangle.y + triangle.h
+                Tyu = triangle.y - triangle.h
+                Tyd = triangle.y
                 if Tx1 <= xr and \
                    xl <= Txr and \
                    yd >= Tyu and \
@@ -277,8 +292,8 @@ def IsRectDead(rect,rect_bot,triangle):
         rect.y  >= 270:
         wind_status['rect_me'] = 0
         wind_status['rect_me_white'] = 1
-    else:
-        wind_status['rect_me'] = 1
+   # else:
+       # wind_status['rect_me'] = 1
 
     #小方块是否被三角碰撞
     HitTriangle(rect,triangle)
@@ -297,45 +312,152 @@ def level_1():
     levelcontrol['transcolorline'] = 1
     levelcontrol['blackwood'] = 1
 
-def gameproc():
 
-    screen = pygame.display.set_mode((960, 640), 0, 32)  # Alpha通道用32
-    pygame.display.set_caption("小方块哦哦哦")
-    rect = Rect_ME(200, 270, 0, 0, 50, 50, 'pink', 270)
-    Triangle_1 = Triangle(1360, 320, 40, 40, 200, 3, 'up', 50, 0, 20)
-    RectBottom_1 = RectBottom(0, 320, 320, 960, 900, 320, 80)
-    RectBottom_2 = RectBottom(0, 320, 320, 960, 900, 320, 80)
-    colorline_pink = TransColorLine(1200, 0, 6, 960, 'pink')
-    colorline_blue = TransColorLine(1500, 0, 6, 960, 'blue')
-    colorline_green = TransColorLine(1200, 0, 6, 960, 'green')
+pygame.init()
+clock = pygame.time.Clock()
+pygame.display.set_caption("小方块哦哦哦")
+font1 = pygame.font.SysFont('宋体', 40, True)
+    #障碍对象
+rect = Rect_ME(200, 270, 0, 0, 50, 50, 'blue', 270)
+RectBottom_1 = RectBottom(0, 320, 320, 640, -200, 320, 80, 2000)
+colorline = TransColorLine(-200, 0, 6, 640, 640)
 
-    blackwood_1 = BlackWood(1400, 250, 100, 20)
+Triangle_UP1 = Triangle(-200, 320, 40, 40, 220, 3, 'up', 50, 0, 20,1000)
+Triangle_UP2 = Triangle(-200, 320, 40, 40, 320, 1, 'up', 40, 0, 20,1000)
+Triangle_UP3 = Triangle(-200, 320, 40, 40, 320, 1, 'up', 40, 0, 20,1000)
+Triangle_DOWN1 = Triangle(-200, 250, 40, 40, 200, 3, 'down', 60, 20, 0, 1000)
+Triangle_DOWN2 = Triangle(-200, 255, 40, 40, 200, 1, 'down', 60, 20, 0, 1000)
+blackwood_1 = BlackWood(-400, 235, 240, 20)
 
+def GamePro():
+    screen = pygame.display.set_mode((640, 640), 0, 32)  # Alpha通道用32
+    count = 250
+    n = 0
+    score = 0
+    level = 0
 #游戏主循环
     while True:
          for event in pygame.event.get():
              if event.type == QUIT:
                  exit()
+         wind_status['movespeed'] = 3 + level*0.5
+         if count >= 350 and wind_status['rect_me']:
+             count = 0
+
+             if n == 0:
+                 RectBottom_1.x_white = 840
+                 Triangle_UP1.x = 1040
+                 colorline.x = 1300
+
+             elif n == 1:
+                 RectBottom_1.x_white = 840
+                 Triangle_UP1.x = 1040
+                 colorline.x = 1300
+
+             elif n == 2:
+                 RectBottom_1.x_white = 840
+                 Triangle_UP1.x = 1040
+                 colorline.x = 1300
+
+             elif n == 3:
+                 Triangle_UP2.num = 1
+                 Triangle_UP2.x = 640
+                 RectBottom_1.width_white = 240
+                 RectBottom_1.x_white = 840
+                 Triangle_UP3.num = 1
+                 Triangle_UP3.x = 1240
+                 colorline.setx = 960
+                 colorline.x = 960
+
+             elif n == 4:
+                 Triangle_UP2.num = 2
+                 Triangle_UP2.x = 640
+                 RectBottom_1.width_white = 160
+                 RectBottom_1.x_white = 880
+                 Triangle_UP3.num = 2
+                 Triangle_UP3.x = 1200
+                 colorline.setx = 960
+                 colorline.x = 960
+
+             elif n == 5:
+                 Triangle_UP2.num = 3
+                 Triangle_UP2.x = 640
+                 RectBottom_1.width_white = 80
+                 RectBottom_1.x_white = 920
+                 Triangle_UP3.num = 3
+                 Triangle_UP3.x = 1160
+                 colorline.setx = 960
+                 colorline.x = 960
+             elif n == 6:
+                 Triangle_DOWN1.x = 640
+                 Triangle_DOWN2.x = 820
+                 RectBottom_1.width_white = 320
+                 RectBottom_1.x_white = 960
+                 blackwood_1.x = 1000
+                 colorline.setx = 1300
+                 colorline.x = 1300
+
+             elif n == 7:
+                 Triangle_DOWN1.x = 640
+                 Triangle_DOWN2.x = 820
+                 RectBottom_1.width_white = 320
+                 RectBottom_1.x_white = 960
+                 blackwood_1.x = 1000
+                 colorline.setx = 1300
+                 colorline.x = 1300
+
+             elif n == 8:
+                 Triangle_DOWN1.x = 640
+                 Triangle_DOWN2.x = 820
+                 RectBottom_1.width_white = 320
+                 RectBottom_1.x_white = 960
+                 blackwood_1.x = 1000
+                 colorline.setx = 1300
+                 colorline.x = 1300
+             n += 1
+             if n == 9:
+                 n = 0
 
          screen.fill((255, 255, 255))
 
+         surface1 = font1.render("SCORE:%d LEVEL:%d" %(score,level), True, [0, 0, 0])
+         screen.blit(surface1, [20, 20])
+
+         rect.DrawMyRect(screen, colorline)
+         RectBottom_1.DrawRectBottom(screen)
+         colorline.DrawTranscolorLine(screen)
+
          level_1()
 
-         rect.DrawMyRect(screen,colorline_blue)
+         Triangle_UP1.DrawTriangle(screen)
+         IsRectDead(rect, RectBottom_1, Triangle_UP1)
 
-         RectBottom_1.DrawRectBottom(screen)
+         Triangle_UP2.DrawTriangle(screen)
+         IsRectDead(rect, RectBottom_1, Triangle_UP2)
 
-         Triangle_1.DrawTriangle(screen)
+         Triangle_UP3.DrawTriangle(screen)
+         IsRectDead(rect, RectBottom_1, Triangle_UP3)
 
-         colorline_blue.DrawTranscolorLine(screen)
+         Triangle_DOWN1.DrawTriangle(screen)
+         IsRectDead(rect, RectBottom_1, Triangle_DOWN1)
 
-         IsRectDead(rect,RectBottom_1,Triangle_1)
+         Triangle_DOWN2.DrawTriangle(screen)
+         IsRectDead(rect, RectBottom_1, Triangle_DOWN2)
+
+         blackwood_1.DrawBlackWood(screen, rect, RectBottom_1)
+         ReachBB(rect, blackwood_1, RectBottom_1)
 
          pygame.time.delay(8)
 
+         if wind_status['rect_me']:
+             count += 1
+             level = (int(score) - int(score) % 10) / 10 + 1
+             score += 0.01
+
+
          pygame.display.update()
 
-gameproc()
+
 
 
 

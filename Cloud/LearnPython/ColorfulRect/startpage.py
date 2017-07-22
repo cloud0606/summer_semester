@@ -42,18 +42,21 @@ button_start = Button(startbut_up_file_name,startbut_down_file_name, (320,350))
 button_end = Button(endbut_up_file_name,endbut_down_file_name, (320,450))
 
 def DrawStarPage():
+    flag = 0
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-               # pygame.quit()
+                   # pygame.quit()
                 exit()
-        if event.type == pygame.MOUSEBUTTONDOWN:
-                if button_end.isOver():
-                    pygame.quit()
-                    exit()
-                elif button_start.isOver():
-                    break
-                    #score= 0
+            if event.type == pygame.MOUSEBUTTONDOWN:
+               if button_end.isOver():
+                   pygame.quit()
+                   exit()
+               elif button_start.isOver():
+                   flag = 1
+                   break
+        if flag == 1:
+            break
         screen_start.blit(startpage, (0, 0))
         #screen.fill((200, 200, 200))
         button_start.render()
@@ -62,4 +65,3 @@ def DrawStarPage():
 
 #DrawStarPage()
 
-DrawStarPage()
