@@ -41,7 +41,7 @@ levelcontrol = {
 }
 
 class Rect_ME :
-    def __init__(self,x,y,v,a,w,h,c,ys):
+    def __init__(self,x,y,v,a,w,h,c,ys,heapwave):
         self.x = x
         self.y = y
         self.v = v
@@ -50,6 +50,7 @@ class Rect_ME :
         self.height = h
         self.color =  c
         self.y_safe =  ys
+        self.heapwave = heapwave
 
     def isOverBoundry(self):
         # 如果方块越界
@@ -79,6 +80,7 @@ class Rect_ME :
         t = 0.5
         pressed_keys = pygame.key.get_pressed()
         if pressed_keys[K_SPACE] and self.y == self.y_safe and wind_status['rect_me']:
+            self.heapwave.play()
             self.v = -35.0
             self.a = 3.0
 
@@ -314,11 +316,13 @@ def level_1():
 
 
 pygame.init()
+pygame.mixer.init()
 clock = pygame.time.Clock()
-pygame.display.set_caption("小方块哦哦哦")
-font1 = pygame.font.SysFont('宋体', 40, True)
+pygame.display.set_caption("ColorBlock")
+font1 = pygame.font.SysFont('幼圆', 40, True)
     #障碍对象
-rect = Rect_ME(200, 270, 0, 0, 50, 50, 'blue', 270)
+heapwav=pygame.mixer.Sound("heap.wav")
+rect = Rect_ME(200, 270, 0, 0, 50, 50, 'blue', 270,heapwav)
 RectBottom_1 = RectBottom(0, 320, 320, 640, -200, 320, 80, 2000)
 colorline = TransColorLine(-200, 0, 6, 640, 640)
 
@@ -328,6 +332,7 @@ Triangle_UP3 = Triangle(-200, 320, 40, 40, 320, 1, 'up', 40, 0, 20,1000)
 Triangle_DOWN1 = Triangle(-200, 250, 40, 40, 200, 3, 'down', 60, 20, 0, 1000)
 Triangle_DOWN2 = Triangle(-200, 255, 40, 40, 200, 1, 'down', 60, 20, 0, 1000)
 blackwood_1 = BlackWood(-400, 235, 240, 20)
+
 
 def GamePro():
     screen = pygame.display.set_mode((640, 640), 0, 32)  # Alpha通道用32
@@ -345,16 +350,19 @@ def GamePro():
              count = 0
 
              if n == 0:
+                 RectBottom_1.width_white = 80
                  RectBottom_1.x_white = 840
                  Triangle_UP1.x = 1040
                  colorline.x = 1300
 
              elif n == 1:
+                 RectBottom_1.width_white = 80
                  RectBottom_1.x_white = 840
                  Triangle_UP1.x = 1040
                  colorline.x = 1300
 
              elif n == 2:
+                 RectBottom_1.width_white = 80
                  RectBottom_1.x_white = 840
                  Triangle_UP1.x = 1040
                  colorline.x = 1300

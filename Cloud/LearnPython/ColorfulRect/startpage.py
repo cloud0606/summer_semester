@@ -9,8 +9,8 @@ startbut_down_file_name = '_start.png'
 endbut_up_file_name = 'end.png'
 endbut_down_file_name = '_end.png'
 
-screen_start = pygame.display.set_mode((960,640),0,32)#Alpha通道用32
-pygame.display.set_caption("起始页")
+screen_start = pygame.display.set_mode((640,640),0,32)#Alpha通道用32
+pygame.display.set_caption("ColorBlockStatpage")
 startpage = pygame.image.load(startpage_file_name).convert()
 
 class Button(object):
@@ -38,17 +38,22 @@ class Button(object):
         else:
             screen_start.blit(self.imageDown, (x , y ))
 
-button_start = Button(startbut_up_file_name,startbut_down_file_name, (320,350))
-button_end = Button(endbut_up_file_name,endbut_down_file_name, (320,450))
+button_start = Button(startbut_up_file_name,startbut_down_file_name, (190,350))
+button_end = Button(endbut_up_file_name,endbut_down_file_name, (190,450))
+
+bkmusic_filename = '/LearnPython/Sevepurebk.wav'
+pygame.mixer.init()
+pygame.mixer.music.load(bkmusic_filename)
 
 def DrawStarPage():
     flag = 0
+    pygame.mixer.music.play(1)
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                    # pygame.quit()
                 exit()
-            if event.type == pygame.MOUSEBUTTONDOWN:
+        if event.type == pygame.MOUSEBUTTONDOWN:
                if button_end.isOver():
                    pygame.quit()
                    exit()
