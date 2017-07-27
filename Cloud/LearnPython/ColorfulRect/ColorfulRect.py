@@ -70,9 +70,12 @@ class Rect_ME :
 
     def hitTransLine(self,col_x,col):
         # 看是否撞变色线
+       # if self.x <= col_x and \
+        #        self.x + self.width/20  >= col_x:
+        #        self.color = color_ntoc[col]
         if self.x <= col_x and \
-                self.x + self.width/20  >= col_x:
-                self.color = color_ntoc[col]
+              self.x + 5 >= col_x:
+            self.color = color_ntoc[col]
 
     def onKeyDown(self):
        # time_passed = clock.tick()
@@ -81,8 +84,8 @@ class Rect_ME :
         pressed_keys = pygame.key.get_pressed()
         if pressed_keys[K_SPACE] and self.y == self.y_safe and wind_status['rect_me']:
             self.heapwave.play()
-            self.v = -35.0
-            self.a = 3.0
+            self.v = -40.0
+            self.a = 4.
 
         self.y += self.v * t + self.a * t * t / 2
         self.v += self.a * t
@@ -279,11 +282,13 @@ def HitTriangle(rect,triangle):
                    yd >= Tyu and \
                    yd <= Tyd:
                     wind_status['rect_me'] = 0
+
                 if Tx1 <= xr and \
                     xl <= Txr and \
                     yu >= Tyu and \
                     yu <= Tyd:
                     wind_status['rect_me'] = 0
+
             num += 1
             firstcol += 1
 
@@ -293,6 +298,7 @@ def IsRectDead(rect,rect_bot,triangle):
         rect_bot.x_white + rect_bot.width_white  > rect.x + rect.width and \
         rect.y  >= 270:
         wind_status['rect_me'] = 0
+        #gameover_wav.play()
         wind_status['rect_me_white'] = 1
    # else:
        # wind_status['rect_me'] = 1
@@ -314,13 +320,61 @@ def level_1():
     levelcontrol['transcolorline'] = 1
     levelcontrol['blackwood'] = 1
 
+def starmove():
+    star_pos[0][0] -= wind_status['movespeed']
+    star_pos[1][0] -= wind_status['movespeed']
+    star_pos[2][0] -= wind_status['movespeed']
+    star_pos[3][0] -= wind_status['movespeed']
+    star_pos[4][0] -= wind_status['movespeed']
+    star_pos[5][0] -= wind_status['movespeed']
+    star_pos[6][0] -= wind_status['movespeed']
+    star_pos[7][0] -= wind_status['movespeed']
+
+def starinit():
+    star_pos[0][0] = 400
+    star_pos[1][0] = 500
+    star_pos[2][0] = 600
+    star_pos[3][0] = 700
+    star_pos[4][0] = 800
+    star_pos[5][0] = 900
+    star_pos[6][0] = 1000
+    star_pos[7][0] = 1100
+    for i in range(8):
+        star_pos[i][2] = 1
+
+def HitStar(rect,score):
+    scoreadd = 0
+    for i in range(8):
+        x = star_pos[i][0] + 25
+        y = star_pos[i][1] + 25
+        if rect.x - 100 < x and x < rect.x + rect.width + 100 and \
+            rect.y < y - 100 and y < rect.y + rect.height + 100:
+            if star_pos[i][2] == 1:
+                getstar_wav.play()
+                star_pos[i][2] = 0
+                scoreadd += 0.5
+    return scoreadd
+
 
 pygame.init()
 pygame.mixer.init()
 clock = pygame.time.Clock()
+framerate = pygame.time.Clock()
+screen = pygame.display.set_mode((640, 640), 0, 32)  # Alpha通道用32
 pygame.display.set_caption("ColorBlock")
-font1 = pygame.font.SysFont('幼圆', 40, True)
+
+font_score = pygame.font.SysFont('幼圆', 40, True)
+font_over1 = pygame.font.SysFont('幼圆', 100, True)
+font_over2 = pygame.font.SysFont('幼圆', 100, True)
+fontsize = [30,40]
+gameover_wav=pygame.mixer.Sound("over.wav")
+readygo_wav=pygame.mixer.Sound("readygo.wav")
+   #奖励品
+star_file_name = 'star1.png'
+star_pos = [[-100,200,1],[-100,200,1],[-100,200,1],[-100,200,1],[-100,200,1],[-100,200,1],[-100,200,1],[-100,200,1]]
+getstar_wav=pygame.mixer.Sound("getstar.wav")
     #障碍对象
+star = pygame.image.load(star_file_name).convert()
 heapwav=pygame.mixer.Sound("heap.wav")
 rect = Rect_ME(200, 270, 0, 0, 50, 50, 'blue', 270,heapwav)
 RectBottom_1 = RectBottom(0, 320, 320, 640, -200, 320, 80, 2000)
@@ -333,27 +387,32 @@ Triangle_DOWN1 = Triangle(-200, 250, 40, 40, 200, 3, 'down', 60, 20, 0, 1000)
 Triangle_DOWN2 = Triangle(-200, 255, 40, 40, 200, 1, 'down', 60, 20, 0, 1000)
 blackwood_1 = BlackWood(-400, 235, 240, 20)
 
-
+Score = [0,0]
+pygame.mixer.music.set_volume(4)
 def GamePro():
-    screen = pygame.display.set_mode((640, 640), 0, 32)  # Alpha通道用32
+    score = 0
+    initcontrol = 0
     count = 250
     n = 0
-    score = 0
     level = 0
+   # readygo_wav.play()
+   # pygame.time.delay(50000)
 #游戏主循环
     while True:
+
          for event in pygame.event.get():
              if event.type == QUIT:
                  exit()
-         wind_status['movespeed'] = 3 + level*0.5
+         wind_status['movespeed'] = 3 + level * 1
+         #gameover_wav = pygame.mixer.Sound("over.wav")
          if count >= 350 and wind_status['rect_me']:
              count = 0
 
              if n == 0:
-                 RectBottom_1.width_white = 80
-                 RectBottom_1.x_white = 840
-                 Triangle_UP1.x = 1040
-                 colorline.x = 1300
+                RectBottom_1.width_white = 80
+                RectBottom_1.x_white = 840
+                Triangle_UP1.x = 1040
+                colorline.x = 1300
 
              elif n == 1:
                  RectBottom_1.width_white = 80
@@ -362,12 +421,16 @@ def GamePro():
                  colorline.x = 1300
 
              elif n == 2:
+                 starinit()
+                 addcount = 1
+
+             elif n == 3:
                  RectBottom_1.width_white = 80
                  RectBottom_1.x_white = 840
                  Triangle_UP1.x = 1040
                  colorline.x = 1300
 
-             elif n == 3:
+             elif n == 4:
                  Triangle_UP2.num = 1
                  Triangle_UP2.x = 640
                  RectBottom_1.width_white = 240
@@ -377,7 +440,10 @@ def GamePro():
                  colorline.setx = 960
                  colorline.x = 960
 
-             elif n == 4:
+             elif n == 5:
+                 starinit()
+                 addcount = 1
+             elif n == 6:
                  Triangle_UP2.num = 2
                  Triangle_UP2.x = 640
                  RectBottom_1.width_white = 160
@@ -387,7 +453,7 @@ def GamePro():
                  colorline.setx = 960
                  colorline.x = 960
 
-             elif n == 5:
+             elif n == 7:
                  Triangle_UP2.num = 3
                  Triangle_UP2.x = 640
                  RectBottom_1.width_white = 80
@@ -396,25 +462,11 @@ def GamePro():
                  Triangle_UP3.x = 1160
                  colorline.setx = 960
                  colorline.x = 960
-             elif n == 6:
-                 Triangle_DOWN1.x = 640
-                 Triangle_DOWN2.x = 820
-                 RectBottom_1.width_white = 320
-                 RectBottom_1.x_white = 960
-                 blackwood_1.x = 1000
-                 colorline.setx = 1300
-                 colorline.x = 1300
-
-             elif n == 7:
-                 Triangle_DOWN1.x = 640
-                 Triangle_DOWN2.x = 820
-                 RectBottom_1.width_white = 320
-                 RectBottom_1.x_white = 960
-                 blackwood_1.x = 1000
-                 colorline.setx = 1300
-                 colorline.x = 1300
 
              elif n == 8:
+                 starinit()
+                 addcount = 1
+             elif n == 9:
                  Triangle_DOWN1.x = 640
                  Triangle_DOWN2.x = 820
                  RectBottom_1.width_white = 320
@@ -422,20 +474,49 @@ def GamePro():
                  blackwood_1.x = 1000
                  colorline.setx = 1300
                  colorline.x = 1300
+
+             elif n == 10:
+                 Triangle_DOWN1.x = 640
+                 Triangle_DOWN2.x = 820
+                 RectBottom_1.width_white = 320
+                 RectBottom_1.x_white = 960
+                 blackwood_1.x = 1000
+                 colorline.setx = 1300
+                 colorline.x = 1300
+
+             elif n == 11:
+                 starinit()
+                 addcount = 1
+             elif n == 12:
+                 Triangle_DOWN1.x = 640
+                 Triangle_DOWN2.x = 820
+                 RectBottom_1.width_white = 320
+                 RectBottom_1.x_white = 960
+                 blackwood_1.x = 1000
+                 colorline.setx = 1300
+                 colorline.x = 1300
+
+             elif n == 13:
+                 starinit()
+                 addcount = 1
              n += 1
-             if n == 9:
+             if n == 14:
                  n = 0
 
          screen.fill((255, 255, 255))
-
-         surface1 = font1.render("SCORE:%d LEVEL:%d" %(score,level), True, [0, 0, 0])
-         screen.blit(surface1, [20, 20])
 
          rect.DrawMyRect(screen, colorline)
          RectBottom_1.DrawRectBottom(screen)
          colorline.DrawTranscolorLine(screen)
 
          level_1()
+         starmove()
+         score += HitStar(rect,score)
+
+         for i in range(8):
+             if star_pos[i][2]:
+                screen.blit(star, (star_pos[i][0], star_pos[i][1]))
+
 
          Triangle_UP1.DrawTriangle(screen)
          IsRectDead(rect, RectBottom_1, Triangle_UP1)
@@ -457,13 +538,42 @@ def GamePro():
 
          pygame.time.delay(8)
 
-         if wind_status['rect_me']:
+         #score = Score[0]
+         #if wind_status['rect_me'] == 0:
+
+
+
+         if wind_status['rect_me'] == 1:
+             surfaceScore = font_score.render("SCORE:%d LEVEL:%d" % (score, level), True, [0, 0, 0])
+             screen.blit(surfaceScore, [20, 20])
              count += 1
              level = (int(score) - int(score) % 10) / 10 + 1
              score += 0.01
+         else:
+             if fontsize[0] < 480:
+                 fontsize[0] += 2
+                 fontsize[1] += 1
+             surfaceScore = font_over1.render("SCORE:%d" % score, True, [0, 0, 0])
+             surfaceScore =  pygame.transform.scale(surfaceScore, (fontsize[0], fontsize[1]))
+             screen.blit(surfaceScore, [100, 100])
+             surfaceScore = font_over2.render("LEVEL:%d" % level, True, [0, 0, 0])
+             surfaceScore = pygame.transform.scale(surfaceScore, (fontsize[0], fontsize[1]))
+             screen.blit(surfaceScore, [100, 250])
 
 
          pygame.display.update()
+
+         if initcontrol == 0:
+             readygo_wav.play()
+             pygame.time.delay(800)
+             initcontrol = 1
+
+         if wind_status['rect_me'] == 0 :
+
+             if initcontrol == 1:
+                gameover_wav.play()
+                initcontrol = 2
+
 
 
 
