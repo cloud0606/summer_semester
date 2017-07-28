@@ -1,7 +1,5 @@
-######画初始窗口
 import pygame
 from sys import exit
-
 pygame.init()
 startpage_file_name = 'startpage.jpg'
 startbut_up_file_name = 'start.png'
@@ -83,6 +81,7 @@ class MySprite(pygame.sprite.Sprite):
             rect = (frame_x, frame_y, self.frame_width, self.frame_height)
             self.image = self.master_image.subsurface(rect)
             self.old_frame = self.frame
+
 #按钮
 button_start = Button(startbut_up_file_name,startbut_down_file_name, (175,350))
 button_end = Button(endbut_up_file_name,endbut_down_file_name, (175,450))
@@ -95,7 +94,6 @@ framerate = pygame.time.Clock()
 bomb = MySprite(screen_start)
 group = pygame.sprite.Group()
 group.add(bomb)
-
 
 def DrawStarPage():
     flag = 0

@@ -355,7 +355,6 @@ def HitStar(rect,score):
                 scoreadd += 0.5
     return scoreadd
 
-
 pygame.init()
 pygame.mixer.init()
 clock = pygame.time.Clock()
@@ -389,6 +388,7 @@ blackwood_1 = BlackWood(-400, 235, 240, 20)
 
 Score = [0,0]
 pygame.mixer.music.set_volume(4)
+
 def GamePro():
     score = 0
     initcontrol = 0
@@ -517,7 +517,6 @@ def GamePro():
              if star_pos[i][2]:
                 screen.blit(star, (star_pos[i][0], star_pos[i][1]))
 
-
          Triangle_UP1.DrawTriangle(screen)
          IsRectDead(rect, RectBottom_1, Triangle_UP1)
 
@@ -559,7 +558,6 @@ def GamePro():
              surfaceScore = font_over2.render("LEVEL:%d" % level, True, [0, 0, 0])
              surfaceScore = pygame.transform.scale(surfaceScore, (fontsize[0], fontsize[1]))
              screen.blit(surfaceScore, [100, 250])
-
 
          pygame.display.update()
 
